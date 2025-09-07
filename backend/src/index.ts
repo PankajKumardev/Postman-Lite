@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import proxyRoutes from './routes/proxy.js';
+import requestRoutes from './routes/requests.js';
 
 // Load environment variables
 dotenv.config();
@@ -20,6 +22,8 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/proxy', proxyRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 // Health check endpoint
@@ -36,6 +40,10 @@ app.use((err: any, req: any, res: any, next: any) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+  console.log(`🔄 Proxy endpoints: http://localhost:${PORT}/api/proxy`);
+  console.log(`📝 Request endpoints: http://localhost:${PORT}/api/requests`);
 });
 
 export default app;
