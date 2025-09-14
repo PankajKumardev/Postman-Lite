@@ -5,6 +5,8 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Send, Save, Plus, X, Globe, Code2, Check } from 'lucide-react'
+import { JsonEditor } from './JsonEditor'
+import { ResponsePreview } from './ResponsePreview'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 
@@ -137,15 +139,6 @@ export function RequestBuilder() {
     }
   }
 
-  function getStatusColor(status?: number) {
-    if (!status) return 'text-muted-foreground'
-    if (status >= 200 && status < 300) return 'text-green-600 dark:text-green-400'
-    if (status >= 300 && status < 400) return 'text-yellow-600 dark:text-yellow-400'
-    if (status >= 400 && status < 500) return 'text-orange-600 dark:text-orange-400'
-    if (status >= 500) return 'text-red-600 dark:text-red-400'
-    return 'text-muted-foreground'
-  }
-
   return (
     <div className="space-y-6">
       {/* Request URL Bar */}
@@ -262,12 +255,11 @@ export function RequestBuilder() {
               <CardTitle className="text-lg font-semibold">Request Body (JSON)</CardTitle>
             </CardHeader>
             <CardContent>
-              <textarea
+              <JsonEditor
                 value={body}
-                onChange={e => setBody(e.target.value)}
-                rows={12}
-                className="w-full border border-input rounded-md p-3 font-mono text-sm bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                onChange={setBody}
                 placeholder='{\n  "key": "value",\n  "number": 42,\n  "boolean": true\n}'
+                rows={12}
               />
             </CardContent>
           </Card>
@@ -275,44 +267,18 @@ export function RequestBuilder() {
 
         {/* Response */}
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold flex items-center justify-between">
-              <span>Response</span>
-              {response.status && (
-                <div className={`text-sm font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
-                  {response.status} {response.statusText}
-                </div>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {response.error ? (
               <div className="p-4 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800">
                 <strong>Error:</strong> {response.error}
               </div>
             ) : response.status ? (
-              <div className="space-y-4">
-                {response.headers && Object.keys(response.headers).length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Response Headers</h4>
-                    <div className="border rounded-md p-2 bg-muted/30 max-h-32 overflow-auto">
-                      <pre className="text-xs font-mono">
-                        {Object.entries(response.headers)
-                          .map(([k, v]) => `${k}: ${v}`)
-                          .join('\n')}
-                      </pre>
-                    </div>
-                  </div>
-                )}
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Response Body</h4>
-                  <div className="border rounded-md p-3 bg-muted/30 max-h-96 overflow-auto">
-                    <pre className="text-xs font-mono whitespace-pre-wrap">
-                      {pretty(response.data)}
-                    </pre>
-                  </div>
-                </div>
-              </div>
+              <ResponsePreview
+                data={response.data}
+                headers={response.headers}
+                status={response.status}
+                statusText={response.statusText}
+              />
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <Send className="mx-auto h-12 w-12 mb-4 opacity-50" />
@@ -328,10 +294,6 @@ export function RequestBuilder() {
 
 function safeParseJSON(input: string): any | undefined {
   try { return JSON.parse(input) } catch { return undefined }
-}
-
-function pretty(obj: unknown) {
-  try { return JSON.stringify(obj, null, 2) } catch { return String(obj) }
 }
 
 
