@@ -40,10 +40,6 @@ app.use((err: any, req: any, res: any, next: any) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-  console.log(`🔄 Proxy endpoints: http://localhost:${PORT}/api/proxy`);
-  console.log(`📝 Request endpoints: http://localhost:${PORT}/api/requests`);
 });
 
 export default app;

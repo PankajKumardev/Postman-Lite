@@ -1,12 +1,26 @@
 import { useMemo, useState } from 'react'
 import { saveRequest } from '../lib/api'
 import { API_BASE } from '../lib/api'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Send, Save, Plus, X, Globe, Code2, Check } from 'lucide-react'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 
 type HeaderRow = { id: string; key: string; value: string }
 
 const METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']
+
+const METHOD_COLORS = {
+  GET: 'bg-green-500 hover:bg-green-600',
+  POST: 'bg-blue-500 hover:bg-blue-600',
+  PUT: 'bg-orange-500 hover:bg-orange-600',
+  DELETE: 'bg-red-500 hover:bg-red-600',
+  PATCH: 'bg-purple-500 hover:bg-purple-600',
+  HEAD: 'bg-gray-500 hover:bg-gray-600',
+  OPTIONS: 'bg-indigo-500 hover:bg-indigo-600',
+}
 
 export function RequestBuilder() {
   const [url, setUrl] = useState('https://httpbin.org/get')
@@ -115,53 +129,198 @@ export function RequestBuilder() {
         responseBody: response.data ?? null,
       }
       await saveRequest(payload)
-      setSaveMsg('Saved!')
+      setSaveMsg('saved')
       setTimeout(() => setSaveMsg(''), 1500)
     } catch (e: any) {
-      setSaveMsg(e?.message || 'Save failed')
+      setSaveMsg('error')
       setTimeout(() => setSaveMsg(''), 2500)
     }
   }
 
+  function getStatusColor(status?: number) {
+    if (!status) return 'text-muted-foreground'
+    if (status >= 200 && status < 300) return 'text-green-600 dark:text-green-400'
+    if (status >= 300 && status < 400) return 'text-yellow-600 dark:text-yellow-400'
+    if (status >= 400 && status < 500) return 'text-orange-600 dark:text-orange-400'
+    if (status >= 500) return 'text-red-600 dark:text-red-400'
+    return 'text-muted-foreground'
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <select value={method} onChange={e => setMethod(e.target.value as HttpMethod)} className="border rounded-md px-2 py-2">
-          {METHODS.map(m => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-        <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://api.example.com" className="flex-1 border rounded-md px-3 py-2" />
-        <button onClick={send} disabled={sending} className="px-4 py-2 rounded-md bg-black text-white disabled:opacity-50">{sending ? 'Sending…' : 'Send'}</button>
-        <button type="button" onClick={onSave} className='px-3 py-2 rounded-md border'>Save</button>
-        {saveMsg && <span className='text-sm text-gray-600'>{saveMsg}</span>}
-      </div>
+    <div className="space-y-6">
+      {/* Request URL Bar */}
+      <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+        <CardContent className="p-4">
+          <div className="flex gap-3 items-center">
+            <div className="relative">
+              <select 
+                value={method} 
+                onChange={e => setMethod(e.target.value as HttpMethod)} 
+                className={`px-3 py-2 rounded-md text-white text-sm font-medium border-0 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500/20 transition-all ${METHOD_COLORS[method]}`}
+              >
+                {METHODS.map(m => (
+                  <option key={m} value={m} className="bg-background text-foreground">{m}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex-1 relative">
+              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                value={url} 
+                onChange={e => setUrl(e.target.value)} 
+                placeholder="https://api.example.com/endpoint" 
+                className="pl-10 h-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+            
+            <Button 
+              onClick={send} 
+              disabled={sending} 
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transition-all duration-200 min-w-[100px]"
+            >
+              {sending ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Sending</span>
+                </div>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Send
+                </>
+              )}
+            </Button>
+            
+            <Button 
+              onClick={onSave} 
+              variant="outline"
+              className="transition-all duration-200 hover:bg-muted/50"
+            >
+              {saveMsg === 'saved' ? (
+                <Check className="mr-2 h-4 w-4 text-green-600" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              {saveMsg === 'saved' ? 'Saved!' : saveMsg === 'error' ? 'Error' : 'Save'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-3">
-          <div className="text-sm font-medium">Headers</div>
-          <div className="space-y-2">
-            {headers.map(h => (
-              <div key={h.id} className="flex gap-2">
-                <input value={h.key} onChange={e => updateHeader(h.id, 'key', e.target.value)} placeholder="Header" className="border rounded-md px-2 py-2 w-1/2" />
-                <input value={h.value} onChange={e => updateHeader(h.id, 'value', e.target.value)} placeholder="Value" className="border rounded-md px-2 py-2 w-1/2" />
-                <button onClick={() => removeHeader(h.id)} className="px-3 rounded-md border">×</button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Request Configuration */}
+        <div className="space-y-6">
+          {/* Headers */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold flex items-center">
+                <Code2 className="mr-2 h-5 w-5" />
+                Headers
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {headers.map(h => (
+                <div key={h.id} className="flex gap-2 items-center">
+                  <Input
+                    value={h.key}
+                    onChange={e => updateHeader(h.id, 'key', e.target.value)}
+                    placeholder="Header name"
+                    className="flex-1 h-9"
+                  />
+                  <Input
+                    value={h.value}
+                    onChange={e => updateHeader(h.id, 'value', e.target.value)}
+                    placeholder="Header value"
+                    className="flex-1 h-9"
+                  />
+                  <Button
+                    onClick={() => removeHeader(h.id)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:text-red-400"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                onClick={addHeader}
+                variant="outline"
+                size="sm"
+                className="w-full border-dashed hover:bg-muted/50"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Header
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Request Body */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold">Request Body (JSON)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <textarea
+                value={body}
+                onChange={e => setBody(e.target.value)}
+                rows={12}
+                className="w-full border border-input rounded-md p-3 font-mono text-sm bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                placeholder='{\n  "key": "value",\n  "number": 42,\n  "boolean": true\n}'
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Response */}
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold flex items-center justify-between">
+              <span>Response</span>
+              {response.status && (
+                <div className={`text-sm font-mono px-2 py-1 rounded ${getStatusColor(response.status)}`}>
+                  {response.status} {response.statusText}
+                </div>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {response.error ? (
+              <div className="p-4 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800">
+                <strong>Error:</strong> {response.error}
               </div>
-            ))}
-            <button onClick={addHeader} className="px-3 py-1 rounded-md border">Add header</button>
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Body (JSON)</div>
-            <textarea value={body} onChange={e => setBody(e.target.value)} rows={10} className="w-full border rounded-md p-2 font-mono text-sm" placeholder='{"key":"value"}' />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Response</div>
-          <div className="text-sm text-gray-600">Status: {response.status} {response.statusText}</div>
-          <pre className="border rounded-md p-3 bg-input overflow-auto max-h-[480px] text-xs">{pretty(response)}</pre>
-        </div>
+            ) : response.status ? (
+              <div className="space-y-4">
+                {response.headers && Object.keys(response.headers).length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Response Headers</h4>
+                    <div className="border rounded-md p-2 bg-muted/30 max-h-32 overflow-auto">
+                      <pre className="text-xs font-mono">
+                        {Object.entries(response.headers)
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join('\n')}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">Response Body</h4>
+                  <div className="border rounded-md p-3 bg-muted/30 max-h-96 overflow-auto">
+                    <pre className="text-xs font-mono whitespace-pre-wrap">
+                      {pretty(response.data)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <Send className="mx-auto h-12 w-12 mb-4 opacity-50" />
+                <p>Send a request to see the response</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
