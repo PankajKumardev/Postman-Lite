@@ -1,50 +1,45 @@
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
-import { Zap, Shield, Code, Gauge, ArrowRight, Check, Star, Users, Globe, Rocket } from 'lucide-react'
+import { Zap, Shield, Code, ArrowRight, Check, Star, Users, Globe, Rocket } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { ThemeToggle } from '../components/theme-toggle'
+import { useTheme } from '../components/theme-provider'
+import { UnifiedNavigation } from '../components/UnifiedNavigation'
 
 export const HomePage = () => {
     const navigate = useNavigate()
+    const { theme } = useTheme()
+    
+    // Determine if we're in dark mode
+    const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     
     return (
         <div className="min-h-screen bg-background">
             {/* Navigation */}
-            <nav className="relative z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                                <Zap className="w-5 h-5 text-white" />
-                            </div>
-                            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                Postman Lite
-                            </span>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <ThemeToggle />
-                            <Button
-                                variant="ghost"
-                                onClick={() => navigate('/login')}
-                                className="hover:bg-muted/50"
-                            >
-                                Sign In
-                            </Button>
-                            <Button
-                                onClick={() => navigate('/app')}
-                                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                            >
-                                Get Started
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+            <UnifiedNavigation variant="homepage" />
 
             <div className="space-y-20 pb-20">
                 {/* Hero Section */}
-                <section className="pt-20 pb-16">
-                    <div className="max-w-7xl mx-auto px-6 text-center">
+                <section className="pt-20 pb-16 relative">
+                    {/* Theme-aware Aurora Background */}
+                    <div className="absolute inset-0 rounded-2xl">
+                        {/* Force white background for light mode, black for dark mode */}
+                        <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--background)' }}></div>
+                        {/* Aurora gradient overlay */}
+                        <div
+                            className="absolute inset-0 rounded-2xl z-10"
+                            style={{
+                                backgroundImage: `
+                                    radial-gradient(circle at 50% 50%, 
+                                        rgba(58, 123, 255, 0.25) 0%, 
+                                        rgba(100, 149, 237, 0.15) 25%, 
+                                        rgba(123, 104, 238, 0.07) 35%, 
+                                        transparent 50%
+                                    )
+                                `,
+                            }}
+                        />
+                    </div>
+                    <div className="max-w-7xl mx-auto px-6 text-center relative z-20">
                         <div className="space-y-8">
                             <div className="space-y-4">
                                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
@@ -52,9 +47,17 @@ export const HomePage = () => {
                                         Test APIs
                                     </span>
                                     <br />
-                                    <span className="text-foreground">Like a Pro</span>
+                                    <span 
+                                        className="drop-shadow-lg"
+                                        style={{ color: isDarkMode ? '#ffffff' : '#1f2937' }}
+                                    >
+                                        Like a Pro
+                                    </span>
                                 </h1>
-                                <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                                <p 
+                                    className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed drop-shadow-md"
+                                    style={{ color: isDarkMode ? '#d1d5db' : '#374151' }}
+                                >
                                     The lightweight, modern API testing tool that makes HTTP requests simple, beautiful, and powerful. 
                                     Perfect for developers who want enterprise functionality without the complexity.
                                 </p>

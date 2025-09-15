@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { ThemeToggle } from './theme-toggle'
 import { getMe, logout } from '../lib/api'
 import { useNavigate } from 'react-router-dom'
-import { User, LogOut, Settings, Mail } from 'lucide-react'
+import { User, LogOut, Zap } from 'lucide-react'
 
 export function Navigation() {
   const [user, setUser] = useState<any>(null)
@@ -34,26 +34,19 @@ export function Navigation() {
   }
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-6xl mx-auto px-6 py-4">
+    <nav className="relative z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
+      <div className="max-w-full mx-auto px-4 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center cursor-pointer" onClick={() => navigate('/')}>
-                <Mail className="w-5 h-5 text-white" />
-              </div>
-              <div className="cursor-pointer" onClick={() => navigate('/')}>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Postman Lite
-                </h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">
-                  API Testing Tool
-                </p>
-              </div>
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
+            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
             </div>
+            <span className="text-lg font-semibold text-foreground">Postman Lite</span>
+          </div>
 
           {/* Right side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <ThemeToggle />
             
             {loading ? (
@@ -61,7 +54,7 @@ export function Navigation() {
             ) : user ? (
               <div className="flex items-center space-x-3">
                 <div className="hidden sm:flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                  <div className="w-7 h-7 bg-green-600 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <div className="text-sm">
@@ -73,7 +66,7 @@ export function Navigation() {
                   onClick={handleLogout}
                   variant="outline"
                   size="sm"
-                  className="flex items-center space-x-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:border-red-800 dark:hover:text-red-400 transition-colors"
+                  className="h-9 flex items-center space-x-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:border-red-800 dark:hover:text-red-400 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span className="hidden sm:inline">Logout</span>
@@ -82,7 +75,7 @@ export function Navigation() {
             ) : (
               <Button
                 onClick={() => navigate('/login')}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-sm transition-all duration-200"
+                className="h-9 bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                 size="sm"
               >
                 Sign In

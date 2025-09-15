@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { fetchSaved } from '../lib/api'
 import { Button } from './ui/button'
+import { Badge } from './ui/badge'
+import { Alert, AlertDescription } from './ui/alert'
 import { History, Clock, RefreshCw, AlertCircle } from 'lucide-react'
 
 export function HistoryPanel() {
@@ -35,14 +37,14 @@ export function HistoryPanel() {
     return 'text-muted-foreground'
   }
 
-  function getMethodColor(method: string) {
+  function getMethodVariant(method: string): "default" | "secondary" | "destructive" | "outline" {
     switch (method) {
-      case 'GET': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-      case 'POST': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-      case 'PUT': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-      case 'DELETE': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-      case 'PATCH': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+      case 'GET': return 'default'
+      case 'POST': return 'default' 
+      case 'PUT': return 'secondary'
+      case 'DELETE': return 'destructive'
+      case 'PATCH': return 'secondary'
+      default: return 'outline'
     }
   }
 
@@ -90,12 +92,10 @@ export function HistoryPanel() {
             <span className="text-xs">Loading...</span>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center space-y-2">
-            <AlertCircle className="h-6 w-6 text-muted-foreground" />
-            <div className="text-xs text-muted-foreground">
-              {error}
-            </div>
-          </div>
+          <Alert variant="destructive" className="m-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center space-y-2">
             <Clock className="h-6 w-6 text-muted-foreground" />
@@ -111,9 +111,9 @@ export function HistoryPanel() {
                 className="group p-2 border border-border/50 rounded-md hover:bg-muted/30 transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${getMethodColor(r.method)}`}>
+                  <Badge variant={getMethodVariant(r.method)} className="text-xs font-medium">
                     {r.method}
-                  </span>
+                  </Badge>
                   {r.responseStatus && (
                     <span className={`text-xs font-mono ${getStatusColor(r.responseStatus)}`}>
                       {r.responseStatus}

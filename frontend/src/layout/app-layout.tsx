@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Navigation } from '../components/navigation'
+import { UnifiedNavigation } from '../components/UnifiedNavigation'
 import { HistoryPanel } from '../components/HistoryPanel'
 import { useState } from 'react'
 import { Button } from '../components/ui/button'
@@ -10,7 +10,7 @@ import { History, X } from 'lucide-react'
     
     return (
         <div className='min-h-dvh bg-background flex flex-col'>
-            <Navigation />
+            <UnifiedNavigation variant="app" />
             <div className='flex flex-1 overflow-hidden'>
                 {/* Main Content */}
                 <div className='flex-1 p-6 overflow-auto'>

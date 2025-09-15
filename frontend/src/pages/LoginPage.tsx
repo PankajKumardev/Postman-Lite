@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card'
+import { Label } from '../components/ui/label'
+import { Alert, AlertDescription } from '../components/ui/alert'
+import { Separator } from '../components/ui/separator'
 import { login, signup } from '../lib/api'
 import { ThemeToggle } from '../components/theme-toggle'
-import { Eye, EyeOff, Github, Mail } from 'lucide-react'
+import { Eye, EyeOff, Github, Mail, AlertCircle } from 'lucide-react'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
@@ -73,10 +76,9 @@ export function LoginPage() {
             <CardContent className="space-y-4">
               {mode === 'signup' && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Full Name
-                  </label>
+                  <Label htmlFor="name-input">Full Name</Label>
                   <Input
+                    id="name-input"
                     type="text"
                     placeholder="John Doe"
                     value={name}
@@ -88,10 +90,9 @@ export function LoginPage() {
               )}
               
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Email
-                </label>
+                <Label htmlFor="email-input">Email</Label>
                 <Input
+                  id="email-input"
                   type="email"
                   placeholder="name@example.com"
                   value={email}
@@ -102,11 +103,10 @@ export function LoginPage() {
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Password
-                </label>
+                <Label htmlFor="password-input">Password</Label>
                 <div className="relative">
                   <Input
+                    id="password-input"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
@@ -131,9 +131,10 @@ export function LoginPage() {
               </div>
               
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800">
-                  {error}
-                </div>
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
             </CardContent>
             
@@ -171,9 +172,7 @@ export function LoginPage() {
               </div>
               
               <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
+                <Separator />
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">
                     Or continue without account

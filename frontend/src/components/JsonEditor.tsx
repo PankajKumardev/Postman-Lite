@@ -1,5 +1,8 @@
 import { useState, useRef, type KeyboardEvent } from 'react'
 import { Button } from './ui/button'
+import { Label } from './ui/label'
+import { Textarea } from './ui/textarea'
+import { Badge } from './ui/badge'
 import { Eye, EyeOff, Braces, Check, AlertCircle } from 'lucide-react'
 
 interface JsonEditorProps {
@@ -190,14 +193,13 @@ export function JsonEditor({ value, onChange, placeholder, rows = 12 }: JsonEdit
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
-            {isValidJson ? (
-              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-            ) : (
-              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-            )}
-            <span className="text-xs text-muted-foreground">
-              {isValidJson ? 'Valid JSON' : 'Invalid JSON'}
-            </span>
+            <Badge variant={isValidJson ? "default" : "destructive"} className="text-xs">
+              {isValidJson ? (
+                <><Check className="h-3 w-3 mr-1" />Valid JSON</>
+              ) : (
+                <><AlertCircle className="h-3 w-3 mr-1" />Invalid JSON</>
+              )}
+            </Badge>
           </div>
         </div>
         
@@ -246,18 +248,20 @@ export function JsonEditor({ value, onChange, placeholder, rows = 12 }: JsonEdit
 
       {/* Editor */}
       <div className="relative">
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={e => handleChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={rows}
-          className={`w-full border rounded-md p-3 font-mono text-sm bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none ${
-            !isValidJson && value.trim() ? 'border-red-300 dark:border-red-700' : 'border-input'
-          }`}
-          placeholder={placeholder}
-          spellCheck={false}
-        />
+        <div className="relative">
+          <Label htmlFor="json-editor" className="sr-only">JSON Editor</Label>
+          <Textarea
+            id="json-editor"
+            ref={textareaRef}
+            value={value}
+            onChange={e => handleChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            rows={rows}
+            className={`font-mono text-sm resize-none ${!isValidJson && value.trim() ? 'border-red-300 dark:border-red-700' : ''}`}
+            placeholder={placeholder}
+            spellCheck={false}
+          />
+        </div>
       </div>
 
       {/* Preview */}

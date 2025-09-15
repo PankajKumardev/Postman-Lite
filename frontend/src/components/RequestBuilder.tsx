@@ -4,7 +4,10 @@ import { API_BASE } from '../lib/api'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Send, Save, Plus, X, Globe, Code2, Check } from 'lucide-react'
+import { Label } from './ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { Alert, AlertDescription } from './ui/alert'
+import { Send, Save, Plus, X, Globe, Code2, Check, AlertCircle } from 'lucide-react'
 import { JsonEditor } from './JsonEditor'
 import { ResponsePreview } from './ResponsePreview'
 
@@ -145,21 +148,22 @@ export function RequestBuilder() {
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardContent className="p-4">
           <div className="flex gap-3 items-center">
-            <div className="relative">
-              <select 
-                value={method} 
-                onChange={e => setMethod(e.target.value as HttpMethod)} 
-                className={`px-3 py-2 rounded-md text-white text-sm font-medium border-0 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500/20 transition-all ${METHOD_COLORS[method]}`}
-              >
+            <Select value={method} onValueChange={(value) => setMethod(value as HttpMethod)}>
+              <SelectTrigger className={`w-32 text-white font-medium border-0 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500/20 transition-all ${METHOD_COLORS[method]}`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
                 {METHODS.map(m => (
-                  <option key={m} value={m} className="bg-background text-foreground">{m}</option>
+                  <SelectItem key={m} value={m} className="font-medium">{m}</SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
             
             <div className="flex-1 relative">
+              <Label htmlFor="url-input" className="sr-only">API Endpoint URL</Label>
               <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
+                id="url-input"
                 value={url} 
                 onChange={e => setUrl(e.target.value)} 
                 placeholder="https://api.example.com/endpoint" 
@@ -215,18 +219,26 @@ export function RequestBuilder() {
             <CardContent className="space-y-3">
               {headers.map(h => (
                 <div key={h.id} className="flex gap-2 items-center">
-                  <Input
-                    value={h.key}
-                    onChange={e => updateHeader(h.id, 'key', e.target.value)}
-                    placeholder="Header name"
-                    className="flex-1 h-9"
-                  />
-                  <Input
-                    value={h.value}
-                    onChange={e => updateHeader(h.id, 'value', e.target.value)}
-                    placeholder="Header value"
-                    className="flex-1 h-9"
-                  />
+                  <div className="flex-1">
+                    <Label htmlFor={`header-key-${h.id}`} className="sr-only">Header Name</Label>
+                    <Input
+                      id={`header-key-${h.id}`}
+                      value={h.key}
+                      onChange={e => updateHeader(h.id, 'key', e.target.value)}
+                      placeholder="Header name"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor={`header-value-${h.id}`} className="sr-only">Header Value</Label>
+                    <Input
+                      id={`header-value-${h.id}`}
+                      value={h.value}
+                      onChange={e => updateHeader(h.id, 'value', e.target.value)}
+                      placeholder="Header value"
+                      className="h-9"
+                    />
+                  </div>
                   <Button
                     onClick={() => removeHeader(h.id)}
                     variant="ghost"
@@ -269,9 +281,12 @@ export function RequestBuilder() {
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardContent className="p-6">
             {response.error ? (
-              <div className="p-4 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800">
-                <strong>Error:</strong> {response.error}
-              </div>
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Error:</strong> {response.error}
+                </AlertDescription>
+              </Alert>
             ) : response.status ? (
               <ResponsePreview
                 data={response.data}
