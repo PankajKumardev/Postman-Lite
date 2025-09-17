@@ -157,15 +157,15 @@ export function HistoryDetailPage() {
         <CardContent className="flex-1 flex flex-col p-0">
           <div className="flex border-b border-border">
             <Button
-              variant={activeTab === 'request' ? 'secondary' : 'ghost'}
-              className={`rounded-none rounded-tl-md ${activeTab === 'request' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+              variant="ghost"
+              className={`rounded-none rounded-tl-md px-4 py-2 ${activeTab === 'request' ? 'bg-blue-600 text-white shadow-none font-medium hover:bg-blue-700' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
               onClick={() => setActiveTab('request')}
             >
               Request
             </Button>
             <Button
-              variant={activeTab === 'response' ? 'secondary' : 'ghost'}
-              className={`rounded-none ${activeTab === 'response' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+              variant="ghost"
+              className={`rounded-none px-4 py-2 ${activeTab === 'response' ? 'bg-blue-600 text-white shadow-none font-medium hover:bg-blue-700' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
               onClick={() => setActiveTab('response')}
             >
               Response
@@ -177,16 +177,16 @@ export function HistoryDetailPage() {
               <div className="space-y-4">
                 <div className="flex border-b border-border">
                   <Button
-                    variant={requestView === 'headers' ? 'secondary' : 'ghost'}
-                    className={`rounded-none ${requestView === 'headers' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+                    variant="ghost"
+                    className={`rounded-none px-4 py-2 ${requestView === 'headers' ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                     onClick={() => setRequestView('headers')}
                   >
                     <Code2 className="h-4 w-4 mr-2" />
                     Headers
                   </Button>
                   <Button
-                    variant={requestView === 'body' ? 'secondary' : 'ghost'}
-                    className={`rounded-none ${requestView === 'body' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+                    variant="ghost"
+                    className={`rounded-none px-4 py-2 ${requestView === 'body' ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                     onClick={() => setRequestView('body')}
                   >
                     <Braces className="h-4 w-4 mr-2" />
@@ -235,16 +235,16 @@ export function HistoryDetailPage() {
               <div className="space-y-4">
                 <div className="flex border-b border-border">
                   <Button
-                    variant={responseView === 'headers' ? 'secondary' : 'ghost'}
-                    className={`rounded-none ${responseView === 'headers' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+                    variant="ghost"
+                    className={`rounded-none px-4 py-2 ${responseView === 'headers' ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                     onClick={() => setResponseView('headers')}
                   >
                     <Code2 className="h-4 w-4 mr-2" />
                     Headers
                   </Button>
                   <Button
-                    variant={responseView === 'body' ? 'secondary' : 'ghost'}
-                    className={`rounded-none ${responseView === 'body' ? 'bg-secondary text-secondary-foreground shadow-none' : ''}`}
+                    variant="ghost"
+                    className={`rounded-none px-4 py-2 ${responseView === 'body' ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                     onClick={() => setResponseView('body')}
                   >
                     <Braces className="h-4 w-4 mr-2" />

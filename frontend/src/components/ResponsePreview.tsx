@@ -153,19 +153,19 @@ export function ResponsePreview({ data, headers, status, statusText }: ResponseP
           {/* Always show preview toggle */}
           <div className="flex border rounded-md">
             <Button
-              onClick={() => setViewMode('raw')}
-              variant={viewMode === 'raw' ? 'default' : 'ghost'}
+              variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs rounded-r-none"
+              className={`h-8 px-3 text-xs rounded-r-none ${viewMode === 'raw' ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'hover:bg-muted'}`}
+              onClick={() => setViewMode('raw')}
             >
               <Code2 className="h-3 w-3 mr-1" />
               Raw
             </Button>
             <Button
-              onClick={() => setViewMode('preview')}
-              variant={viewMode === 'preview' ? 'default' : 'ghost'}
+              variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs rounded-l-none"
+              className={`h-8 px-3 text-xs rounded-l-none ${viewMode === 'preview' ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'hover:bg-muted'}`}
+              onClick={() => setViewMode('preview')}
             >
               {isHtml ? (
                 <>

@@ -3,7 +3,7 @@ import { fetchSaved } from '../lib/api'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Alert, AlertDescription } from './ui/alert'
-import { History, Clock, RefreshCw, AlertCircle } from 'lucide-react'
+import { Clock, RefreshCw, AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export function HistoryPanel() {
@@ -110,7 +110,7 @@ export function HistoryPanel() {
             {items.map((r, index) => (
               <div 
                 key={r.id || index} 
-                className="group p-2 border border-border/50 rounded-md hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+                className="group p-3 border border-border/50 rounded-md hover:bg-muted/30 transition-all duration-200 cursor-pointer hover:border-blue-500/50 active:border-blue-500 active:bg-blue-500/10 dark:active:bg-blue-500/20"
                 onClick={() => navigate(`/history/${r.id}`)}
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
