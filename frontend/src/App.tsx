@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage'
 import { AppPage } from './pages/AppPage'
 import { LoginPage } from './pages/LoginPage'
 import { ThemeProvider } from './components/theme-provider'
+import { HistoryDetailPage } from './pages/HistoryDetailPage'
 
 function App() {
   const router = createBrowserRouter([
@@ -24,6 +25,16 @@ function App() {
         path: '/app',
         element: <AppPage />
        }
+      ]
+    },
+    {
+      path: '/history/:id',
+      element: <AppLayout />,
+      children: [
+        {
+          path: '/history/:id',
+          element: <HistoryDetailPage />
+        }
       ]
     }
   ])

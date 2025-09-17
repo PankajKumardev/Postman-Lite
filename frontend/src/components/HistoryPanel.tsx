@@ -4,11 +4,13 @@ import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Alert, AlertDescription } from './ui/alert'
 import { History, Clock, RefreshCw, AlertCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 export function HistoryPanel() {
   const [items, setItems] = useState<any[]>([])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadHistory()
@@ -109,6 +111,7 @@ export function HistoryPanel() {
               <div 
                 key={r.id || index} 
                 className="group p-2 border border-border/50 rounded-md hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+                onClick={() => navigate(`/history/${r.id}`)}
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <Badge variant={getMethodVariant(r.method)} className="text-xs font-medium">
