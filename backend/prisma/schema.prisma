@@ -17,8 +17,9 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  requests Request[]
+  accounts   Account[]
+  requests   Request[]
+  collections Collection[]
 }
 
 model Account {
@@ -52,4 +53,35 @@ model Request {
 
   userId String?
   user   User? @relation(fields: [userId], references: [id])
+
+  collectionRequests CollectionRequest[]
+}
+
+model Collection {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId       String?
+  user         User?   @relation(fields: [userId], references: [id])
+  collectionRequests CollectionRequest[]
+}
+
+model CollectionRequest {
+  id           Int      @id @default(autoincrement())
+  name         String
+  method       String
+  url          String
+  headers      Json
+  body         Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  collectionId Int
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  requestId Int?
+  request   Request? @relation(fields: [requestId], references: [id])
 }

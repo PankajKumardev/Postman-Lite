@@ -1,6 +1,7 @@
 {
-  "name": "backend",
+  "name": "postman-lite-backend",
   "version": "1.0.0",
+  "description": "Backend API for Postman Lite - A lightweight alternative to Postman for API testing and development",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -13,12 +14,17 @@
     "db:studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "postman",
+    "api",
+    "testing",
+    "http",
+    "rest"
+  ],
+  "author": "Postman Lite Team",
+  "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^6.15.0",
+    "@prisma/client": "^6.16.2",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/jsonwebtoken": "^9.0.10",
@@ -29,6 +35,7 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.16.2",
     "zod": "^4.1.5"
   },
   "devDependencies": {

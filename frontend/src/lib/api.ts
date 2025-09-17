@@ -39,3 +39,51 @@ export async function fetchSaved(params?: { page?: number; limit?: number }) {
   return api(`/api/requests/saved${q.size ? `?${q.toString()}` : ''}`, { method: 'GET' })
 }
 
+// Collections API
+export async function createCollection(payload: { name: string; description?: string }) {
+  return api('/api/collections', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function getCollections() {
+  return api('/api/collections', { method: 'GET' })
+}
+
+export async function getCollection(id: number) {
+  return api(`/api/collections/${id}`, { method: 'GET' })
+}
+
+export async function updateCollection(id: number, payload: { name?: string; description?: string }) {
+  return api(`/api/collections/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+}
+
+export async function deleteCollection(id: number) {
+  return api(`/api/collections/${id}`, { method: 'DELETE' })
+}
+
+export async function createCollectionRequest(collectionId: number, payload: { 
+  name: string; 
+  method: string; 
+  url: string; 
+  headers?: Record<string, string>;
+  body?: any;
+}) {
+  return api(`/api/collections/${collectionId}/requests`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function getCollectionRequests(collectionId: number) {
+  return api(`/api/collections/${collectionId}/requests`, { method: 'GET' })
+}
+
+export async function updateCollectionRequest(collectionId: number, requestId: number, payload: { 
+  name: string; 
+  method: string; 
+  url: string; 
+  headers?: Record<string, string>;
+  body?: any;
+}) {
+  return api(`/api/collections/${collectionId}/requests/${requestId}`, { method: 'PUT', body: JSON.stringify(payload) })
+}
+
+export async function deleteCollectionRequest(collectionId: number, requestId: number) {
+  return api(`/api/collections/${collectionId}/requests/${requestId}`, { method: 'DELETE' })
+}

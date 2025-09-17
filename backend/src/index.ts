@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import proxyRoutes from './routes/proxy.js';
 import requestRoutes from './routes/requests.js';
+import collectionRoutes from './routes/collections.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,7 +25,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/proxy', proxyRoutes);
 app.use('/api/requests', requestRoutes);
-
+app.use('/api/collections', collectionRoutes);
 
 // Health check endpoint
 app.get('/health', (req: any, res: any) => {

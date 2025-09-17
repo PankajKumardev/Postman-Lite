@@ -6,6 +6,8 @@ import { AppPage } from './pages/AppPage'
 import { LoginPage } from './pages/LoginPage'
 import { ThemeProvider } from './components/theme-provider'
 import { HistoryDetailPage } from './pages/HistoryDetailPage'
+import { CollectionsPage } from './pages/CollectionsPage'
+import { SettingsPage } from './pages/SettingsPage'
 
 function App() {
   const router = createBrowserRouter([
@@ -24,6 +26,14 @@ function App() {
        {
         path: '/app',
         element: <AppPage />
+       },
+       {
+        path: '/app/collections',
+        element: <CollectionsPage />
+       },
+       {
+        path: '/app/settings',
+        element: <SettingsPage />
        }
       ]
     },

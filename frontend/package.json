@@ -1,7 +1,8 @@
 {
-  "name": "frontend",
+  "name": "postman-lite-frontend",
+  "description": "Frontend for Postman Lite - A lightweight alternative to Postman for API testing and development",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +10,16 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "keywords": [
+    "postman",
+    "api",
+    "testing",
+    "http",
+    "rest",
+    "react"
+  ],
+  "author": "Postman Lite Team",
+  "license": "MIT",
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
