@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { saveRequest } from '../lib/api'
+import { useMemo, useState, useEffect } from 'react'
+import { saveRequest, createCollection, getCollections, createCollectionRequest, getMe } from '../lib/api'
 import { API_BASE } from '../lib/api'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -10,6 +10,14 @@ import { Alert, AlertDescription } from './ui/alert'
 import { Send, Save, Plus, X, Globe, Code2, Check, AlertCircle } from 'lucide-react'
 import { JsonEditor } from './JsonEditor'
 import { ResponsePreview } from './ResponsePreview'
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger
+} from './ui/dialog'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS'
 
@@ -33,6 +41,14 @@ export function RequestBuilder() {
   const [headers, setHeaders] = useState<HeaderRow[]>([{ id: crypto.randomUUID(), key: 'Accept', value: 'application/json' }])
   const [body, setBody] = useState<string>('')
   const [sending, setSending] = useState(false)
+  
+  // Collection-related state
+  const [collections, setCollections] = useState<any[]>([])
+  const [isSaveToCollectionOpen, setIsSaveToCollectionOpen] = useState(false)
+  const [selectedCollectionForSave, setSelectedCollectionForSave] = useState('')
+  const [newRequestName, setNewRequestName] = useState('')
+  const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+  const [newCollectionName, setNewCollectionName] = useState('')
 
   const builtHeaders = useMemo(() => {
     const out: Record<string, string> = {}
@@ -50,6 +66,22 @@ export function RequestBuilder() {
     error?: string
   }>({})
   const [saveMsg, setSaveMsg] = useState('')
+
+  useEffect(() => {
+    // Load collections for saving
+    const loadCollections = async () => {
+      try {
+        const user = await getMe()
+        if (user?.user) {
+          const collectionsData = await getCollections()
+          setCollections(collectionsData)
+        }
+      } catch (error) {
+        console.error('Failed to load collections:', error)
+      }
+    }
+    loadCollections()
+  }, [])
 
   function updateHeader(id: string, key: 'key' | 'value', value: string) {
     setHeaders(prev => prev.map(h => (h.id === id ? { ...h, [key]: value } : h)))
@@ -142,6 +174,46 @@ export function RequestBuilder() {
     }
   }
 
+  async function onSaveToCollection() {
+    if (!selectedCollectionForSave || !newRequestName.trim()) return
+    
+    try {
+      const collectionId = parseInt(selectedCollectionForSave)
+      
+      await createCollectionRequest(collectionId, {
+        name: newRequestName,
+        method,
+        url,
+        headers: builtHeaders,
+        body: body ? safeParseJSON(body) ?? body : undefined,
+      })
+
+      setIsSaveToCollectionOpen(false)
+      setNewRequestName('')
+      setSelectedCollectionForSave('')
+    } catch (e: any) {
+      console.error('Failed to save to collection:', e)
+    }
+  }
+
+  async function onCreateCollection() {
+    if (!newCollectionName.trim()) return
+    
+    try {
+      const newCollection = await createCollection({
+        name: newCollectionName,
+        description: ''
+      })
+      
+      setCollections([...collections, newCollection])
+      setSelectedCollectionForSave(newCollection.id.toString())
+      setIsCreatingCollection(false)
+      setNewCollectionName('')
+    } catch (e: any) {
+      console.error('Failed to create collection:', e)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Request URL Bar */}
@@ -199,8 +271,81 @@ export function RequestBuilder() {
               ) : (
                 <Save className="mr-2 h-4 w-4" />
               )}
-              {saveMsg === 'saved' ? 'Saved!' : saveMsg === 'error' ? 'Error' : 'Save'}
+              {saveMsg === 'saved' ? 'Saved!' : saveMsg === 'error' ? 'Error' : 'Save to History'}
             </Button>
+            
+            <Dialog open={isSaveToCollectionOpen} onOpenChange={setIsSaveToCollectionOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="transition-all duration-200 hover:bg-muted/50">
+                  <Save className="mr-2 h-4 w-4" />
+                  Save to Collection
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Save Request to Collection</DialogTitle>
+                  <DialogDescription>
+                    Save this request to an existing collection or create a new one
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="request-name">Request Name</Label>
+                    <Input
+                      id="request-name"
+                      value={newRequestName}
+                      onChange={(e) => setNewRequestName(e.target.value)}
+                      placeholder="e.g., Get User Profile"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="collection-select">Collection</Label>
+                    <Select value={selectedCollectionForSave} onValueChange={setSelectedCollectionForSave}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a collection" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {collections.map((collection) => (
+                          <SelectItem key={collection.id} value={collection.id.toString()}>
+                            {collection.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {isCreatingCollection && (
+                    <div>
+                      <Label htmlFor="new-collection-name">New Collection Name</Label>
+                      <Input
+                        id="new-collection-name"
+                        value={newCollectionName}
+                        onChange={(e) => setNewCollectionName(e.target.value)}
+                        placeholder="e.g., User Management APIs"
+                      />
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsCreatingCollection(!isCreatingCollection)}
+                    >
+                      {isCreatingCollection ? 'Select Existing' : 'Create New Collection'}
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => setIsSaveToCollectionOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={isCreatingCollection ? onCreateCollection : onSaveToCollection}
+                        disabled={!newRequestName.trim() || (!selectedCollectionForSave && !isCreatingCollection)}
+                      >
+                        {isCreatingCollection ? 'Create & Save' : 'Save Request'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>

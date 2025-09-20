@@ -87,3 +87,44 @@ export async function updateCollectionRequest(collectionId: number, requestId: n
 export async function deleteCollectionRequest(collectionId: number, requestId: number) {
   return api(`/api/collections/${collectionId}/requests/${requestId}`, { method: 'DELETE' })
 }
+
+export async function executeCollectionRequest(collectionId: number, requestId: number) {
+  return api(`/api/collections/${collectionId}/requests/${requestId}/execute`, { method: 'POST' })
+}
+
+export async function duplicateCollectionRequest(collectionId: number, requestId: number) {
+  return api(`/api/collections/${collectionId}/requests/${requestId}/duplicate`, { method: 'POST' })
+}
+
+export async function exportCollection(id: number) {
+  return api(`/api/collections/${id}/export`, { method: 'GET' })
+}
+
+export async function importCollection(payload: { data: any; name?: string }) {
+  return api('/api/collections/import', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function getCollectionStats() {
+  return api('/api/collections/stats', { method: 'GET' })
+}
+
+export async function bulkExecuteCollectionRequests(collectionId: number, requestIds: number[]) {
+  return api(`/api/collections/${collectionId}/requests/bulk-execute`, { 
+    method: 'POST', 
+    body: JSON.stringify({ requestIds }) 
+  })
+}
+
+export async function bulkDeleteCollectionRequests(collectionId: number, requestIds: number[]) {
+  return api(`/api/collections/${collectionId}/requests/bulk-delete`, { 
+    method: 'DELETE', 
+    body: JSON.stringify({ requestIds }) 
+  })
+}
+
+export async function bulkUpdateCollectionRequests(collectionId: number, requestIds: number[], updates: any) {
+  return api(`/api/collections/${collectionId}/requests/bulk-update`, { 
+    method: 'PUT', 
+    body: JSON.stringify({ requestIds, updates }) 
+  })
+}

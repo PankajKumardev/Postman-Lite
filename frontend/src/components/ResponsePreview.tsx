@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from './ui/button'
-import { Eye, EyeOff, Code2, Globe, Copy, Check, Braces } from 'lucide-react'
+import { Eye, Code2, Globe, Copy, Check, Braces } from 'lucide-react'
 
 interface ResponsePreviewProps {
   data: unknown

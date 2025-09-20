@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { ThemeToggle } from './theme-toggle'
 import { getMe, logout } from '../lib/api'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { User, LogOut, Zap, Save, History, Settings, FileText, Home, ChevronDown } from 'lucide-react'
+import { User, LogOut, Zap, Settings, FileText, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,

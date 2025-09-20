@@ -29,9 +29,6 @@ export function Navigation() {
     }
   }
 
-  function handleLogin() {
-    navigate('/login')
-  }
 
   return (
     <nav className="relative z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">

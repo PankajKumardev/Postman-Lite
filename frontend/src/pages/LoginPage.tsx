@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '../components/ui/alert'
 import { Separator } from '../components/ui/separator'
 import { login, signup } from '../lib/api'
 import { ThemeToggle } from '../components/theme-toggle'
-import { Eye, EyeOff, Github, Mail, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, AlertCircle } from 'lucide-react'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
