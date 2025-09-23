@@ -1,8 +1,6 @@
-import { useNavigate } from 'react-router-dom'
 import { Navigation1 } from '@/components/Navigation1'
 
 export const HomePage = () => {
-    const navigate = useNavigate()
     
     return (
         <div>

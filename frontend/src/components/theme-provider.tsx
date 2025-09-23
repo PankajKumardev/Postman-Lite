@@ -33,19 +33,19 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement
 
+    // Normalize: Tailwind dark mode should rely ONLY on presence of 'dark' class.
+    // Do not add 'light' class; remove it if present.
     root.classList.remove('light', 'dark')
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light'
-
-      root.classList.add(systemTheme)
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (isDark) root.classList.add('dark')
       return
     }
 
-    root.classList.add(theme)
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    }
   }, [theme])
 
   const value = {
