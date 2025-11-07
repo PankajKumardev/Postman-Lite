@@ -6,8 +6,6 @@ import {
   Check,
   GitBranch,
   Layers,
-  LockKeyhole,
-  Plug,
   Server,
   Terminal,
 } from 'lucide-react';
@@ -27,16 +25,16 @@ import {
 // Key value props for users (not tech stack)
 const SIGNALS = [
   {
-    label: 'Privacy',
-    title: 'Local-first',
+    label: 'Simple',
+    title: 'Easy to use',
     description:
-      'No telemetry or tracking. Your data stays on your device unless you choose to sync or export.',
+      'Clean interface for testing APIs. Build and send requests quickly without complexity.',
   },
   {
     label: 'Open',
     title: 'No vendor lock-in',
     description:
-      'Collections and requests are plain JSON. Move, version, or share them however you want.',
+      'Collections and requests are plain JSON. Export and share them however you want.',
   },
   {
     label: 'Free',
@@ -48,84 +46,84 @@ const SIGNALS = [
 
 const CAPABILITIES = [
   {
-    name: 'Git-native collections',
+    name: 'Collections Management',
     description:
-      'Export collections as clean JSON. Commit, branch, and diff requests alongside your code without vendor lock-in.',
+      'Create, organize, and manage API request collections. Export as JSON for version control and easy sharing.',
     icon: GitBranch,
   },
   {
-    name: 'Focused request builder',
+    name: 'Request Builder',
     description:
-      'HTTP method dropdown, URL autocomplete, and JSON body editor with real-time syntax highlighting and validation.',
+      'Build HTTP requests with method selection, URL input, headers, and JSON body editor with syntax highlighting.',
     icon: Terminal,
   },
   {
-    name: 'Local environment variables',
+    name: 'Request History',
     description:
-      'Store API keys, tokens, and base URLs in encrypted local storage. Switch environments with zero cloud dependency.',
-    icon: LockKeyhole,
-  },
-  {
-    name: 'Searchable request history',
-    description:
-      'Every sent request gets saved locally. Filter by URL, method, or status code to replay any previous call instantly.',
+      'View and manage your request history. Replay previous requests instantly without losing any data.',
     icon: Layers,
   },
   {
-    name: 'Built-in CORS proxy',
+    name: 'Response Viewer',
     description:
-      'Route requests through localhost:3001 to bypass browser CORS restrictions. Test any remote API without extra setup.',
-    icon: Plug,
+      'View formatted JSON responses, status codes, and response times. Clean interface for analyzing API responses.',
+    icon: Activity,
   },
   {
-    name: 'Response time tracking',
+    name: 'JSON Formatting',
     description:
-      'Monitor latency, payload size, and error rates. Export metrics as CSV or integrate with your monitoring dashboard.',
-    icon: Activity,
+      'Automatic syntax highlighting and formatting for JSON request bodies and responses. Makes reading API data easy.',
+    icon: Server,
+  },
+  {
+    name: 'Export & Import',
+    description:
+      'Export collections as JSON files. Import and share collections with your team or keep them in version control.',
+    icon: Check,
   },
 ];
 
 const LOOP = [
   {
     step: '01',
-    title: 'Frame the call',
+    title: 'Build your request',
     detail:
-      'Choose the method, path, and headers in the command palette or via the form—everything responds instantly.',
+      'Select HTTP method, enter URL, add headers and body. Simple form interface makes it quick and easy.',
   },
   {
     step: '02',
-    title: 'Probe and learn',
+    title: 'Send and view response',
     detail:
-      'Send, inspect formatted responses, view raw headers, and annotate notes inline for the next teammate.',
+      'Execute your request and view formatted JSON responses with status codes and response times.',
   },
   {
     step: '03',
-    title: 'Commit or share',
+    title: 'Save to collection',
     detail:
-      'Save to history, add it to a collection, export the file, or push it through git. Every flow remains portable.',
+      'Organize requests in collections. Export as JSON files for backup or sharing with your team.',
   },
 ];
 
 const FAQ = [
   {
-    question: 'Why build another API client?',
+    question: 'What is Postman Lite?',
     answer:
-      'Postman Lite exists for teams that value speed, clarity, and source control. No pop-ups, no cloud sync you never asked for—just tooling you can trust.',
+      'Postman Lite is a simple, open-source API testing tool. Build, test, and organize your API requests in a clean interface.',
   },
   {
-    question: 'How opinionated is the workflow?',
+    question: 'What features does it have?',
     answer:
-      'Not at all. Collections and environments are just structured JSON. Ship them with git, s3, or whichever process your team already uses.',
+      'You can create and manage collections, build HTTP requests, view formatted responses, and access your request history.',
   },
   {
-    question: 'Can we integrate it with CI?',
+    question: 'Is it really free?',
     answer:
-      'Yes. Collections are text-based, so you can lint and run them through your own automation or convert them into smoke tests.',
+      'Yes, completely free and open source. No hidden costs, no premium features, no subscriptions.',
   },
   {
-    question: 'Does it require an account?',
+    question: 'Do I need an account?',
     answer:
-      'You can explore locally without signing in. Accounts unlock sync with the backend when you need collaboration.',
+      'No account required. You can use all features without signing up. Create an account only if you want to save data on the server.',
   },
 ];
 
@@ -142,13 +140,17 @@ export const HomePage = () => {
   useEffect(() => {
     let mounted = true;
     const loadStats = async () => {
+      setStatsLoading(true);
       try {
-        setStatsLoading(true);
         const data = await getCollectionStats();
-        if (mounted)
+        if (mounted) {
           setStats(data as { totalCollections: number; totalRequests: number });
+        }
       } catch {
-        // ignore
+        // User not logged in or error - leave stats as null
+        if (mounted) {
+          setStats(null);
+        }
       } finally {
         if (mounted) setStatsLoading(false);
       }
@@ -191,34 +193,30 @@ export const HomePage = () => {
               variant="outline"
               className="border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-xs uppercase tracking-[0.25em] text-[hsl(var(--muted-foreground))]"
             >
-              Open source • Free forever
+              Open source - Free forever
             </Badge>
             <div className="space-y-4">
               <h1 className="text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
-                The open API client for focused teams
+                A simple API testing tool
               </h1>
               <p className="max-w-2xl text-sm text-[hsl(var(--muted-foreground))] md:text-base">
-                Postman Lite is a fast, distraction-free workspace for building,
-                testing, and sharing API requests. No ads, no tracking, no
-                forced cloud sync—just the essentials for productive API work.
+                Postman Lite is a lightweight tool for testing APIs. Build
+                requests, organize collections, and view responses in a clean,
+                simple interface.
               </p>
             </div>
             <ul className="space-y-3 text-sm text-[hsl(var(--muted-foreground))]">
               <li className="flex items-start gap-3">
                 <Check className="mt-1 h-4 w-4 text-[hsl(var(--primary))]" />
-                <span>
-                  Save and organize requests in collections you control.
-                </span>
+                <span>Create and organize API requests in collections.</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="mt-1 h-4 w-4 text-[hsl(var(--primary))]" />
-                <span>
-                  Replay, edit, and export any call—no vendor lock-in.
-                </span>
+                <span>View formatted JSON responses and status codes.</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="mt-1 h-4 w-4 text-[hsl(var(--primary))]" />
-                <span>Work locally or sync with your team when you want.</span>
+                <span>Access request history and replay previous calls.</span>
               </li>
             </ul>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -266,13 +264,13 @@ export const HomePage = () => {
                   <div className="mb-2 flex items-center justify-between">
                     <span>Latency</span>
                     <span className="text-[hsl(var(--primary))]">
-                      {latency != null ? `${latency} ms` : '—'}
+                      {latency != null ? `${latency} ms` : 'N/A'}
                     </span>
                   </div>
                   <div className="mb-2 flex items-center justify-between">
                     <span>Status</span>
                     <span className="text-[hsl(var(--success,120_60%_40%))]">
-                      {status ?? '—'}
+                      {status ?? 'N/A'}
                     </span>
                   </div>
                   <div className="text-[11px] text-[hsl(var(--muted-foreground))]">
@@ -345,18 +343,43 @@ export const HomePage = () => {
           <Card className="border bg-[hsl(var(--card))] border-[hsl(var(--border))]">
             <CardContent className="space-y-3 p-6">
               <span className="text-[11px] uppercase tracking-[0.3em] text-[hsl(var(--muted-foreground))]">
-                Stats
+                Workspace
               </span>
               <p className="text-lg font-semibold text-[hsl(var(--foreground))]">
-                Your workspace
-              </p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 {statsLoading
                   ? 'Loading...'
                   : stats
-                  ? `${stats.totalCollections} collections · ${stats.totalRequests} requests`
-                  : 'No data available'}
+                  ? 'Your stats'
+                  : 'Sign in to view'}
               </p>
+              <div className="space-y-1 text-sm text-[hsl(var(--muted-foreground))]">
+                {statsLoading ? (
+                  <p>Fetching data...</p>
+                ) : stats ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span>Collections</span>
+                      <span className="text-[hsl(var(--foreground))]">
+                        {stats.totalCollections}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Requests</span>
+                      <span className="text-[hsl(var(--foreground))]">
+                        {stats.totalRequests}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Latency</span>
+                      <span className="text-[hsl(var(--primary))]">
+                        {latency != null ? `${latency} ms` : 'N/A'}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <p>Login to see your workspace statistics</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </section>
@@ -364,12 +387,11 @@ export const HomePage = () => {
         <section className="mt-20 space-y-10">
           <div className="flex flex-col gap-3 text-left">
             <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))] md:text-3xl">
-              What you can do with Postman Lite
+              Features
             </h2>
             <p className="max-w-3xl text-sm text-[hsl(var(--muted-foreground))] md:text-base">
-              Everything you need for API development, nothing you don’t. No
-              distractions, no bloat—just a clear, fast workspace for your
-              requests and collections.
+              Simple and focused features for API testing. Everything you need
+              without the complexity.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -379,7 +401,7 @@ export const HomePage = () => {
                 className="flex h-full flex-col border bg-[hsl(var(--card))] border-[hsl(var(--border))]"
               >
                 <CardContent className="space-y-4 p-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-[hsl(var(--muted))] border-[hsl(var(--border))] text-blue-600 dark:text-blue-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-[hsl(var(--muted))] border-[hsl(var(--border))] text-[hsl(var(--primary))]">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="space-y-2">
@@ -399,11 +421,11 @@ export const HomePage = () => {
         <section className="mt-20 grid gap-8 rounded-2xl border bg-[hsl(var(--card))] border-[hsl(var(--border))] p-8 md:grid-cols-[1.2fr_minmax(0,0.8fr)] md:p-12">
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))] md:text-3xl">
-              Your API workflow, simplified
+              How it works
             </h2>
             <p className="max-w-2xl text-sm text-[hsl(var(--muted-foreground))] md:text-base">
-              From first request to final commit, Postman Lite keeps every step
-              clear and under your control.
+              Simple workflow to test your APIs. Create requests, get responses,
+              and save them for later.
             </p>
             <div className="space-y-6">
               {LOOP.map(({ step, title, detail }) => (
@@ -427,25 +449,25 @@ export const HomePage = () => {
           <div className="rounded-xl border bg-[hsl(var(--muted))] border-[hsl(var(--border))] p-6">
             <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-[hsl(var(--muted-foreground))]">
               <span>Workspace status</span>
-              <Server className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <Server className="h-4 w-4 text-[hsl(var(--primary))]" />
             </div>
             <div className="mt-6 space-y-4 text-sm text-[hsl(var(--foreground))]">
               <div className="flex items-center justify-between border-b pb-4 border-[hsl(var(--border))]">
                 <span>Collections</span>
                 <span className="text-[hsl(var(--primary))]">
-                  {stats?.totalCollections ?? '—'}
+                  {stats?.totalCollections ?? 'N/A'}
                 </span>
               </div>
               <div className="flex items-center justify-between border-b pb-4 border-[hsl(var(--border))]">
                 <span>Requests</span>
                 <span className="text-[hsl(var(--primary))]">
-                  {stats?.totalRequests ?? '—'}
+                  {stats?.totalRequests ?? 'N/A'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Latency</span>
                 <span className="text-[hsl(var(--primary))]">
-                  {latency != null ? `${latency} ms` : '—'}
+                  {latency != null ? `${latency} ms` : 'N/A'}
                 </span>
               </div>
             </div>
@@ -470,7 +492,7 @@ export const HomePage = () => {
           >
             {FAQ.map(({ question, answer }, index) => (
               <AccordionItem key={question} value={`item-${index + 1}`}>
-                <AccordionTrigger className="px-6 text-left text-base font-medium text-[hsl(var(--foreground))] hover:text-blue-600 dark:hover:text-blue-400">
+                <AccordionTrigger className="px-6 text-left text-base font-medium text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]">
                   {question}
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6 text-sm text-[hsl(var(--muted-foreground))]">
@@ -483,12 +505,11 @@ export const HomePage = () => {
 
         <section className="mt-20 flex w-full flex-col items-center gap-4 rounded-2xl border bg-[hsl(var(--card))] border-[hsl(var(--border))] px-8 py-12 text-center">
           <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))] md:text-3xl">
-            Try Postman Lite now
+            Get started with Postman Lite
           </h2>
           <p className="max-w-2xl text-sm text-[hsl(var(--muted-foreground))] md:text-base">
-            Import a curl, replay a saved call, or build a new collection in
-            minutes. No registration required—just open the workspace and start
-            working.
+            Start testing your APIs right away. No complex setup required - just
+            open and start building requests.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
@@ -501,7 +522,7 @@ export const HomePage = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--background))]"
+              className="border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted)/.7)]"
               onClick={() => navigate('/login')}
             >
               Sign in or create account
