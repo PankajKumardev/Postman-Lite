@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { User, LogOut, FileText, Zap, ChevronDown } from 'lucide-react';
+import {
+  User,
+  LogOut,
+  FileText,
+  Zap,
+  ChevronDown,
+  Menu,
+  X,
+  History,
+} from 'lucide-react';
 
 import { Button } from './ui/button';
 import { ThemeToggle } from './theme-toggle';
@@ -30,6 +39,7 @@ export function UnifiedNavigation({
 }: UnifiedNavigationProps) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,12 +71,17 @@ export function UnifiedNavigation({
           href: '/app/collections',
           icon: <FileText className="w-4 h-4" />,
         },
+        {
+          label: 'History',
+          href: '/app/history',
+          icon: <History className="w-4 h-4" />,
+        },
       ];
     } else {
       return [
         { label: 'Features', href: '#features' },
-        { label: 'Pricing', href: '#pricing' },
-        { label: 'Docs', href: '#docs' },
+        { label: 'How it works', href: '#how-it-works' },
+        { label: 'FAQ', href: '#faq' },
       ];
     }
   };
@@ -76,15 +91,39 @@ export function UnifiedNavigation({
   return (
     <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 md:px-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground hover:text-primary"
-        >
-          <span className="text-lg leading-tight font-medium">
-            Postman Lite
-          </span>
-        </Button>
+        <div className="flex items-center gap-3">
+          {/* Mobile menu button - only show for app variant */}
+          {variant === 'app' && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+          )}
+
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (variant === 'homepage') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate('/');
+              }
+            }}
+            className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground hover:text-primary"
+          >
+            <span className="text-lg leading-tight font-medium">
+              Postman Lite
+            </span>
+          </Button>
+        </div>
 
         <div className="flex items-center gap-3">
           <div className="hidden md:flex items-center gap-1">
@@ -94,32 +133,22 @@ export function UnifiedNavigation({
 
               if (isAnchor) {
                 return (
-                  <Button
+                  <button
                     key={link.href}
-                    size="sm"
-                    className="text-sm font-medium px-3 py-2 rounded-md transition-colors"
-                    style={{
-                      backgroundColor: 'transparent',
-                      color: 'inherit',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                      e.currentTarget.style.color = '#111827';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = 'inherit';
-                    }}
+                    className="text-sm font-medium px-3 py-2 rounded-md transition-colors bg-transparent hover:bg-[hsl(var(--muted))] text-foreground"
                     onClick={() => {
                       const element = document.querySelector(link.href);
-                      element?.scrollIntoView({ behavior: 'smooth' });
+                      element?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      });
                     }}
                   >
                     <span className="flex items-center gap-2">
                       {link.icon}
                       {link.label}
                     </span>
-                  </Button>
+                  </button>
                 );
               }
 
@@ -207,6 +236,38 @@ export function UnifiedNavigation({
           )}
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      {mobileMenuOpen && variant === 'app' && (
+        <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur">
+          <nav className="px-4 py-3 space-y-1">
+            {navigationLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+
+              return (
+                <button
+                  key={link.href}
+                  className={cn(
+                    'w-full flex justify-start items-center text-sm font-medium px-3 py-2.5 rounded-md transition-all duration-200',
+                    isActive
+                      ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/.8)] active:bg-[hsl(var(--secondary)/.7)]'
+                      : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted)/.7)] hover:text-[hsl(var(--foreground))] active:bg-[hsl(var(--muted))] active:scale-[0.98]'
+                  )}
+                  onClick={() => {
+                    navigate(link.href);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="flex items-center gap-3">
+                    {link.icon}
+                    {link.label}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

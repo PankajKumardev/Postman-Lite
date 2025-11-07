@@ -384,7 +384,7 @@ export const HomePage = () => {
           </Card>
         </section>
 
-        <section className="mt-20 space-y-10">
+        <section id="features" className="mt-20 space-y-10">
           <div className="flex flex-col gap-3 text-left">
             <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))] md:text-3xl">
               Features
@@ -418,7 +418,10 @@ export const HomePage = () => {
           </div>
         </section>
 
-        <section className="mt-20 grid gap-8 rounded-2xl border bg-[hsl(var(--card))] border-[hsl(var(--border))] p-8 md:grid-cols-[1.2fr_minmax(0,0.8fr)] md:p-12">
+        <section
+          id="how-it-works"
+          className="mt-20 grid gap-8 rounded-2xl border bg-[hsl(var(--card))] border-[hsl(var(--border))] p-8 md:grid-cols-[1.2fr_minmax(0,0.8fr)] md:p-12"
+        >
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))] md:text-3xl">
               How it works
@@ -474,7 +477,7 @@ export const HomePage = () => {
           </div>
         </section>
 
-        <section className="mt-20">
+        <section id="faq" className="mt-20">
           <div className="mb-6 flex flex-col gap-2 text-left md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">

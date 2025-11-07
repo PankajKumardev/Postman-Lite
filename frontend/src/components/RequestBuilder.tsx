@@ -273,12 +273,12 @@ export function RequestBuilder() {
       {/* Request URL Bar */}
       <Card className="border border-border/60 bg-background/60 shadow-sm">
         <CardContent className="p-4">
-          <div className="flex gap-3 items-center">
+          <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
             <Select
               value={method}
               onValueChange={(value) => setMethod(value as HttpMethod)}
             >
-              <SelectTrigger className="w-28 font-semibold uppercase tracking-wide border border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--muted-foreground)/.10)] focus:ring-1 focus:ring-[hsl(var(--primary))] focus:ring-offset-0">
+              <SelectTrigger className="w-full lg:w-28 font-semibold uppercase tracking-wide border border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--muted-foreground)/.10)] focus:ring-1 focus:ring-[hsl(var(--primary))] focus:ring-offset-0">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -304,144 +304,151 @@ export function RequestBuilder() {
               />
             </div>
 
-            <Button
-              onClick={send}
-              disabled={sending}
-              className="min-w-[110px] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-sm transition-colors hover:bg-[hsl(var(--primary)/.85)]"
-            >
-              {sending ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Sending</span>
-                </div>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Send
-                </>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
+              <Button
+                onClick={send}
+                disabled={sending}
+                className="w-full sm:min-w-[110px] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-sm transition-colors hover:bg-[hsl(var(--primary)/.85)]"
+              >
+                {sending ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Sending</span>
+                  </div>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send
+                  </>
+                )}
+              </Button>
 
-            <Button
-              onClick={onSave}
-              variant="outline"
-              className="border-[hsl(var(--border))] transition-colors hover:bg-[hsl(var(--muted-foreground)/.10)]"
-            >
-              {saveMsg === 'saved' ? (
-                <Check className="mr-2 h-4 w-4 text-green-600" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              {saveMsg === 'saved'
-                ? 'Saved!'
-                : saveMsg === 'error'
-                ? 'Error'
-                : 'Save to History'}
-            </Button>
-
-            <Dialog
-              open={isSaveToCollectionOpen}
-              onOpenChange={setIsSaveToCollectionOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-[hsl(var(--border))] transition-colors hover:bg-[hsl(var(--muted-foreground)/.10)]"
-                >
+              <Button
+                onClick={onSave}
+                variant="outline"
+                className="w-full sm:w-auto border-[hsl(var(--border))] transition-colors hover:bg-[hsl(var(--muted-foreground)/.10)]"
+              >
+                {saveMsg === 'saved' ? (
+                  <Check className="mr-2 h-4 w-4 text-green-600" />
+                ) : (
                   <Save className="mr-2 h-4 w-4" />
-                  Save to Collection
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Save Request to Collection</DialogTitle>
-                  <DialogDescription>
-                    Save this request to an existing collection or create a new
-                    one.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="request-name">Request Name</Label>
-                    <Input
-                      id="request-name"
-                      value={newRequestName}
-                      onChange={(e) => setNewRequestName(e.target.value)}
-                      placeholder="e.g., Get User Profile"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="collection-select">Collection</Label>
-                    <Select
-                      value={selectedCollectionForSave}
-                      onValueChange={setSelectedCollectionForSave}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a collection" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {collections.map((collection) => (
-                          <SelectItem
-                            key={collection.id}
-                            value={collection.id.toString()}
-                          >
-                            {collection.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {isCreatingCollection && (
+                )}
+                <span className="whitespace-nowrap">
+                  {saveMsg === 'saved'
+                    ? 'Saved!'
+                    : saveMsg === 'error'
+                    ? 'Error'
+                    : 'Save to History'}
+                </span>
+              </Button>
+
+              <Dialog
+                open={isSaveToCollectionOpen}
+                onOpenChange={setIsSaveToCollectionOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto border-[hsl(var(--border))] transition-colors hover:bg-[hsl(var(--muted-foreground)/.10)]"
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    <span className="whitespace-nowrap">
+                      Save to Collection
+                    </span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Save Request to Collection</DialogTitle>
+                    <DialogDescription>
+                      Save this request to an existing collection or create a
+                      new one.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
                     <div>
-                      <Label htmlFor="new-collection-name">
-                        New Collection Name
-                      </Label>
+                      <Label htmlFor="request-name">Request Name</Label>
                       <Input
-                        id="new-collection-name"
-                        value={newCollectionName}
-                        onChange={(e) => setNewCollectionName(e.target.value)}
-                        placeholder="e.g., User Management APIs"
+                        id="request-name"
+                        value={newRequestName}
+                        onChange={(e) => setNewRequestName(e.target.value)}
+                        placeholder="e.g., Get User Profile"
                       />
                     </div>
-                  )}
-                  <div className="flex justify-between">
-                    <Button
-                      variant="outline"
-                      onClick={() =>
-                        setIsCreatingCollection(!isCreatingCollection)
-                      }
-                    >
-                      {isCreatingCollection
-                        ? 'Select Existing'
-                        : 'Create New Collection'}
-                    </Button>
-                    <div className="flex gap-2">
+                    <div>
+                      <Label htmlFor="collection-select">Collection</Label>
+                      <Select
+                        value={selectedCollectionForSave}
+                        onValueChange={setSelectedCollectionForSave}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a collection" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {collections.map((collection) => (
+                            <SelectItem
+                              key={collection.id}
+                              value={collection.id.toString()}
+                            >
+                              {collection.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {isCreatingCollection && (
+                      <div>
+                        <Label htmlFor="new-collection-name">
+                          New Collection Name
+                        </Label>
+                        <Input
+                          id="new-collection-name"
+                          value={newCollectionName}
+                          onChange={(e) => setNewCollectionName(e.target.value)}
+                          placeholder="e.g., User Management APIs"
+                        />
+                      </div>
+                    )}
+                    <div className="flex justify-between">
                       <Button
                         variant="outline"
-                        onClick={() => setIsSaveToCollectionOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={
-                          isCreatingCollection
-                            ? onCreateCollection
-                            : onSaveToCollection
-                        }
-                        disabled={
-                          !newRequestName.trim() ||
-                          (!selectedCollectionForSave && !isCreatingCollection)
+                        onClick={() =>
+                          setIsCreatingCollection(!isCreatingCollection)
                         }
                       >
                         {isCreatingCollection
-                          ? 'Create & Save'
-                          : 'Save Request'}
+                          ? 'Select Existing'
+                          : 'Create New Collection'}
                       </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsSaveToCollectionOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={
+                            isCreatingCollection
+                              ? onCreateCollection
+                              : onSaveToCollection
+                          }
+                          disabled={
+                            !newRequestName.trim() ||
+                            (!selectedCollectionForSave &&
+                              !isCreatingCollection)
+                          }
+                        >
+                          {isCreatingCollection
+                            ? 'Create & Save'
+                            : 'Save Request'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -530,7 +537,7 @@ export function RequestBuilder() {
 
         {/* Response */}
         <Card className="border border-border/60 bg-background/60 shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-6 flex items-center justify-center min-h-[500px]">
             {response.error ? (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -546,7 +553,7 @@ export function RequestBuilder() {
                 statusText={response.statusText}
               />
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="text-center text-muted-foreground">
                 <Send className="mx-auto h-12 w-12 mb-4 opacity-50" />
                 <p>Send a request to see the response</p>
               </div>

@@ -102,85 +102,93 @@ export function HistoryDetailPage() {
 
   if (error || !request) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="text-red-500 mb-2">
-            <X className="h-12 w-12 mx-auto" />
+      <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-6">
+        <div className="flex items-center justify-center h-[50vh]">
+          <div className="text-center space-y-4">
+            <div className="text-destructive mb-2">
+              <X className="h-12 w-12 mx-auto" />
+            </div>
+            <p className="text-destructive font-medium">
+              {error || 'Request not found'}
+            </p>
+            <Button
+              onClick={() => navigate('/app/history')}
+              className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/.9)]"
+            >
+              Back to History
+            </Button>
           </div>
-          <p className="text-red-500 font-medium">
-            {error || 'Request not found'}
-          </p>
-          <Button onClick={() => navigate('/app')} className="mt-4">
-            Back to Home
-          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+    <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Button
-            onClick={() => navigate('/app')}
+            onClick={() => navigate('/app/history')}
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-9 w-9 hover:bg-[hsl(var(--muted)/.7)]"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h3 className="text-lg font-semibold">Request Details</h3>
+          <div>
+            <h1 className="text-2xl font-bold">Request Details</h1>
+            <p className="text-sm text-muted-foreground">
+              View request and response details
+            </p>
+          </div>
         </div>
         <Button
-          onClick={() => navigate('/app')}
+          onClick={() => navigate('/app/history')}
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="h-9 w-9 hover:bg-[hsl(var(--muted)/.7)]"
         >
           <X className="h-4 w-4" />
         </Button>
       </div>
 
-      <Card className="flex-1 flex flex-col border-border/50 bg-card/50 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Badge
-                variant={getMethodVariant(request.method)}
-                className="text-sm font-medium"
-              >
-                {request.method}
-              </Badge>
-              <span className="font-mono text-sm text-foreground truncate">
-                {request.url}
-              </span>
-            </div>
-            {request.responseStatus && (
-              <div
-                className={`text-sm font-mono ${getStatusColor(
-                  request.responseStatus
-                )}`}
-              >
-                Status: {request.responseStatus}
-              </div>
-            )}
-            {request.createdAt && (
-              <div className="text-xs text-muted-foreground">
-                {new Date(request.createdAt).toLocaleString()}
-              </div>
-            )}
+      <Card className="flex-1 flex flex-col border-border bg-card">
+        <CardHeader className="pb-3 space-y-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge
+              variant={getMethodVariant(request.method)}
+              className="text-sm font-medium"
+            >
+              {request.method}
+            </Badge>
+            <span className="font-mono text-sm text-foreground break-all">
+              {request.url}
+            </span>
           </div>
+          {request.responseStatus && (
+            <div
+              className={`text-sm font-mono ${getStatusColor(
+                request.responseStatus
+              )}`}
+            >
+              Status: {request.responseStatus}
+            </div>
+          )}
+          {request.createdAt && (
+            <div className="text-xs text-muted-foreground">
+              {new Date(request.createdAt).toLocaleString()}
+            </div>
+          )}
         </CardHeader>
 
         <CardContent className="flex-1 flex flex-col p-0">
-          <div className="flex border-b border-border">
+          <div className="flex border-b border-border bg-muted/30">
             <Button
               variant="ghost"
-              className={`rounded-none rounded-tl-md px-4 py-2 ${
+              className={`rounded-none px-6 py-2.5 font-medium transition-all ${
                 activeTab === 'request'
-                  ? 'bg-blue-600 text-white shadow-none font-medium hover:bg-blue-700'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  ? 'text-foreground bg-background border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               }`}
               onClick={() => setActiveTab('request')}
             >
@@ -188,10 +196,10 @@ export function HistoryDetailPage() {
             </Button>
             <Button
               variant="ghost"
-              className={`rounded-none px-4 py-2 ${
+              className={`rounded-none px-6 py-2.5 font-medium transition-all ${
                 activeTab === 'response'
-                  ? 'bg-blue-600 text-white shadow-none font-medium hover:bg-blue-700'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  ? 'text-foreground bg-background border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               }`}
               onClick={() => setActiveTab('response')}
             >
@@ -202,13 +210,14 @@ export function HistoryDetailPage() {
           <div className="flex-1 overflow-auto p-4">
             {activeTab === 'request' ? (
               <div className="space-y-4">
-                <div className="flex border-b border-border">
+                <div className="flex gap-2 pb-3">
                   <Button
-                    variant="ghost"
-                    className={`rounded-none px-4 py-2 ${
+                    variant="outline"
+                    size="sm"
+                    className={`${
                       requestView === 'headers'
-                        ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                        : 'hover:bg-muted'
                     }`}
                     onClick={() => setRequestView('headers')}
                   >
@@ -216,11 +225,12 @@ export function HistoryDetailPage() {
                     Headers
                   </Button>
                   <Button
-                    variant="ghost"
-                    className={`rounded-none px-4 py-2 ${
+                    variant="outline"
+                    size="sm"
+                    className={`${
                       requestView === 'body'
-                        ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                        : 'hover:bg-muted'
                     }`}
                     onClick={() => setRequestView('body')}
                   >
@@ -272,13 +282,14 @@ export function HistoryDetailPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex border-b border-border">
+                <div className="flex gap-2 pb-3">
                   <Button
-                    variant="ghost"
-                    className={`rounded-none px-4 py-2 ${
+                    variant="outline"
+                    size="sm"
+                    className={`${
                       responseView === 'headers'
-                        ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                        : 'hover:bg-muted'
                     }`}
                     onClick={() => setResponseView('headers')}
                   >
@@ -286,11 +297,12 @@ export function HistoryDetailPage() {
                     Headers
                   </Button>
                   <Button
-                    variant="ghost"
-                    className={`rounded-none px-4 py-2 ${
+                    variant="outline"
+                    size="sm"
+                    className={`${
                       responseView === 'body'
-                        ? 'bg-gray-700 text-white shadow-none font-medium hover:bg-gray-800'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                        : 'hover:bg-muted'
                     }`}
                     onClick={() => setResponseView('body')}
                   >
