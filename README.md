@@ -1,162 +1,402 @@
 # Postman Lite
 
-A lightweight alternative to Postman for API testing and development.
+> A lightweight, modern alternative to Postman for API testing and development. Built with React, TypeScript, and Node.js.
 
-## Features
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://postmanlite.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- API request testing with all HTTP methods
-- Request history tracking
-- Collections for organizing requests
-- User authentication (Email/Password and Google OAuth)
-- Responsive design for desktop and mobile use
+## 🚀 Features
 
-## Tech Stack
+### Core Functionality
+
+- **🔥 API Request Testing** - Support for all HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
+- **📝 Request Builder** - Intuitive interface for building API requests with headers and JSON body
+- **📊 Response Viewer** - View responses in Raw, Formatted JSON, or HTML Preview modes
+- **⚡ Real-time Execution** - Send requests and get instant responses with detailed status codes
+
+### Organization & Management
+
+- **📁 Collections** - Organize related API requests into collections
+- **🗂️ Request History** - Automatic tracking of all sent requests with timestamps
+- **💾 Save to Collection** - Save requests directly to collections for reuse
+- **📤 Import/Export** - Import and export collections in JSON format
+- **🔍 Search & Filter** - Find requests quickly across history and collections
+
+### Advanced Features
+
+- **🎨 Dual Theme** - Light and dark mode support with seamless switching
+- **👤 User Authentication** - Secure email/password authentication with JWT
+- **🔐 OAuth Integration** - Google OAuth 2.0 support for quick sign-in
+- **📱 Responsive Design** - Fully responsive UI works on desktop, tablet, and mobile
+- **⚙️ Request Duplication** - Quickly duplicate requests within collections
+- **🚦 Status Visualization** - Color-coded status indicators (200s green, 400s orange, 500s red)
+- **📋 Copy to Clipboard** - Quick copy for responses and request details
+
+### Bulk Operations
+
+- **✅ Bulk Select** - Select multiple requests at once
+- **🚀 Bulk Execute** - Run multiple requests simultaneously
+- **✏️ Bulk Edit** - Update multiple requests with same changes
+- **🗑️ Bulk Delete** - Delete multiple requests in one action
+
+### Developer Experience
+
+- **🔄 CORS Proxy** - Built-in proxy to bypass CORS restrictions
+- **📊 Collection Statistics** - View total collections and requests count
+- **🎯 Request Validation** - Zod-based validation for request data
+- **⌨️ Keyboard Shortcuts** - Quick actions with keyboard shortcuts
+- **🔔 Toast Notifications** - Real-time feedback for all actions
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- React with TypeScript
-- Vite for build tooling
-- Tailwind CSS for styling
-- shadcn/ui components
-- React Router for navigation
+
+| Technology          | Purpose                                                |
+| ------------------- | ------------------------------------------------------ |
+| **React 19**        | UI framework with modern hooks and concurrent features |
+| **TypeScript**      | Type-safe development                                  |
+| **Vite**            | Lightning-fast build tool and dev server               |
+| **Tailwind CSS v4** | Utility-first CSS with custom theming                  |
+| **shadcn/ui**       | Beautiful, accessible component library                |
+| **React Router v6** | Client-side routing                                    |
+| **Lucide React**    | Modern icon library                                    |
+| **Zod**             | Schema validation                                      |
 
 ### Backend
-- Node.js with Express
-- TypeScript
-- PostgreSQL with Prisma ORM
-- JWT for authentication
-- Zod for validation
 
-## Prerequisites
+| Technology        | Purpose                                 |
+| ----------------- | --------------------------------------- |
+| **Node.js**       | JavaScript runtime                      |
+| **Express 5**     | Web framework                           |
+| **TypeScript**    | Type-safe server code                   |
+| **Prisma ORM**    | Database toolkit with type-safe queries |
+| **PostgreSQL**    | Relational database                     |
+| **JWT**           | Stateless authentication                |
+| **bcrypt**        | Password hashing                        |
+| **Axios**         | HTTP client for proxying requests       |
+| **Zod**           | Runtime validation                      |
+| **Cookie Parser** | Cookie handling                         |
 
-- Node.js (v16 or higher)
-- PostgreSQL database
-- npm or yarn package manager
+### DevOps & Deployment
 
-## Installation
+- **Vercel** - Frontend and backend deployment
+- **Vercel Postgres** - Managed PostgreSQL database
+- **GitHub** - Version control and CI/CD
 
-### Backend Setup
+## 📋 Prerequisites
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+Before you begin, ensure you have:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+- **Node.js** v18 or higher
+- **npm** or **yarn** package manager
+- **PostgreSQL** database (local or cloud)
+- **Git** for version control
 
-3. Create a `.env` file based on `.env.example` and configure your environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Set the following variables:
-   - `DATABASE_URL` - Your PostgreSQL connection string
-   - `AUTH_SECRET` - Secret key for JWT token signing
-   - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` - For Google OAuth (optional)
+## 🚀 Quick Start
 
-4. Run database migrations:
-   ```bash
-   npx prisma migrate dev
-   ```
+### 1. Clone the Repository
 
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
+```bash
+git clone https://github.com/PankajKumardev/Postman-Lite.git
+cd Postman-Lite
+```
 
-### Frontend Setup
+### 2. Backend Setup
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+```bash
+cd backend
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+# Install dependencies
+npm install
 
-3. Create a `.env` file based on `.env.example` and configure your environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Set the `VITE_API_BASE` variable to point to your backend server (default: http://localhost:3000)
+# Copy environment variables
+cp env.example .env
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+# Configure .env file with:
+# - DATABASE_URL (PostgreSQL connection string)
+# - AUTH_SECRET (random secret for JWT)
+# - GOOGLE_CLIENT_ID (optional, for OAuth)
+# - GOOGLE_CLIENT_SECRET (optional, for OAuth)
 
-## API Endpoints
+# Run database migrations
+npx prisma migrate dev
 
-### Authentication
-- `POST /api/auth/signup` - Create a new user
-- `POST /api/auth/login` - Login with email and password
-- `POST /api/auth/logout` - Logout current user
-- `GET /api/auth/me` - Get current user info
-- `GET /api/auth/google` - Initiate Google OAuth
-- `GET /api/auth/google/callback` - Google OAuth callback
+# Generate Prisma Client
+npx prisma generate
 
-### Requests
-- `POST /api/requests/save` - Save a request to history
-- `GET /api/requests/saved` - Get saved requests with pagination
+# Start development server
+npm run dev
+```
 
-### Collections
-- `POST /api/collections` - Create a new collection
-- `GET /api/collections` - Get all collections for user
-- `GET /api/collections/:id` - Get a specific collection
-- `PUT /api/collections/:id` - Update a collection
-- `DELETE /api/collections/:id` - Delete a collection
-- `POST /api/collections/:id/requests` - Create a request in a collection
-- `GET /api/collections/:id/requests` - Get all requests in a collection
-- `PUT /api/collections/:id/requests/:requestId` - Update a request in a collection
-- `DELETE /api/collections/:id/requests/:requestId` - Delete a request from a collection
+Backend will run on `http://localhost:3000`
 
-## Project Structure
+### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Create environment file
+cp .env.example .env.local
+
+# Configure .env.local with:
+# VITE_API_BASE=http://localhost:3000
+
+# Start development server
+npm run dev
+```
+
+Frontend will run on `http://localhost:5173`
+
+## 🔧 Environment Variables
+
+### Backend (.env)
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/postman"
+
+# Authentication
+AUTH_SECRET="your-super-secret-jwt-key-here"
+
+# Google OAuth (Optional)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Server
+PORT=3000
+NODE_ENV="development"
+```
+
+### Frontend (.env.local for development)
+
+```env
+VITE_API_BASE=http://localhost:3000
+```
+
+### Frontend (.env.production for production)
+
+```env
+VITE_API_BASE=https://your-backend-url.vercel.app
+```
+
+## 📁 Project Structure
 
 ```
-postman-lite/
+Postman-Lite/
 ├── backend/
 │   ├── src/
-│   │   ├── routes/     # API route handlers
-│   │   ├── index.ts    # Main server entry point
-│   │   └── ...
-│   ├── prisma/         # Prisma schema and migrations
-│   ├── .env            # Environment variables
-│   └── ...
+│   │   ├── routes/
+│   │   │   ├── auth.ts          # Authentication routes
+│   │   │   ├── collections.ts    # Collection management
+│   │   │   ├── requests.ts       # Request history
+│   │   │   └── proxy.ts          # CORS proxy
+│   │   └── index.ts              # Server entry point
+│   ├── prisma/
+│   │   ├── schema.prisma         # Database schema
+│   │   └── migrations/           # Database migrations
+│   ├── package.json
+│   └── tsconfig.json
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── pages/      # Page components
-│   │   ├── lib/        # Utility functions and API clients
-│   │   ├── App.tsx     # Main app component
-│   │   └── ...
-│   ├── .env            # Environment variables
-│   └── ...
+│   │   ├── components/
+│   │   │   ├── ui/               # shadcn/ui components
+│   │   │   ├── RequestBuilder.tsx
+│   │   │   ├── ResponsePreview.tsx
+│   │   │   ├── JsonEditor.tsx
+│   │   │   └── ...
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── CollectionsPage.tsx
+│   │   │   ├── HistoryPage.tsx
+│   │   │   ├── LoginPage.tsx
+│   │   │   └── ...
+│   │   ├── lib/
+│   │   │   ├── api.ts            # API client
+│   │   │   └── utils.ts          # Utilities
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   └── vite.config.ts
+│
 └── README.md
 ```
 
-## Development
+## 🔌 API Endpoints
 
-Both frontend and backend use TypeScript for type safety. The project follows modern development practices with:
+### Authentication
 
-- ESLint for code quality
-- Prettier for code formatting
-- Husky for git hooks
-- Conventional commits for changelog generation
+```
+POST   /api/auth/signup           # Create new account
+POST   /api/auth/login            # Login with email/password
+POST   /api/auth/logout           # Logout current user
+GET    /api/auth/me               # Get current user info
+GET    /api/auth/google           # Initiate Google OAuth
+GET    /api/auth/google/callback  # OAuth callback
+GET    /api/auth/providers        # Get OAuth providers status
+```
 
-## Contributing
+### Requests
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Commit your changes following conventional commit format
-5. Push to the branch
-6. Create a Pull Request
+```
+POST   /api/requests/save         # Save request to history
+GET    /api/requests/saved        # Get saved requests (paginated)
+```
 
-## License
+### Collections
 
-MIT License - see LICENSE file for details.
+```
+GET    /api/collections           # Get all collections
+POST   /api/collections           # Create collection
+GET    /api/collections/stats     # Get collection statistics
+POST   /api/collections/import    # Import collection
+GET    /api/collections/:id       # Get specific collection
+PUT    /api/collections/:id       # Update collection
+DELETE /api/collections/:id       # Delete collection
+GET    /api/collections/:id/export # Export collection
+
+# Collection Requests
+GET    /api/collections/:id/requests                    # Get all requests
+POST   /api/collections/:id/requests                    # Create request
+PUT    /api/collections/:id/requests/:requestId         # Update request
+DELETE /api/collections/:id/requests/:requestId         # Delete request
+POST   /api/collections/:id/requests/:requestId/execute # Execute request
+POST   /api/collections/:id/requests/:requestId/duplicate # Duplicate request
+
+# Bulk Operations
+POST   /api/collections/:id/requests/bulk-execute  # Execute multiple
+DELETE /api/collections/:id/requests/bulk-delete   # Delete multiple
+PUT    /api/collections/:id/requests/bulk-update   # Update multiple
+```
+
+### Proxy
+
+```
+POST   /api/proxy                 # Proxy API requests (CORS bypass)
+GET    /api/proxy/health          # Proxy health check
+```
+
+## 🎨 Features in Detail
+
+### Request Builder
+
+- Dropdown method selector (GET, POST, PUT, DELETE, etc.)
+- URL input with validation
+- Headers management (key-value pairs)
+- JSON body editor with syntax validation
+- Send button with loading state
+- Save to History and Save to Collection options
+
+### Response Preview
+
+- **Raw Mode**: View unformatted response data
+- **Preview Mode**:
+  - JSON formatting with syntax highlighting
+  - HTML rendering in iframe
+  - Text preview
+- Response headers display
+- Status code with color coding
+- Copy to clipboard functionality
+
+### Collections Management
+
+- Create, update, and delete collections
+- Add requests to collections
+- Execute requests from collections
+- Duplicate requests
+- Import/Export collections as JSON
+- Bulk operations (select, execute, edit, delete)
+- Search and filter requests
+- Collection statistics
+
+### History Tracking
+
+- Automatic save of all sent requests
+- Timestamps for each request
+- Method and URL display
+- Status code tracking
+- Click to view full request/response details
+- Navigate to detailed view
+
+### User Authentication
+
+- Email/password registration and login
+- Google OAuth integration
+- JWT-based session management
+- Secure HTTP-only cookies
+- Guest mode (limited features)
+- User profile display
+
+## 🎯 Roadmap
+
+- [ ] Environment variables support
+- [ ] GraphQL support
+- [ ] WebSocket testing
+- [ ] Team collaboration features
+- [ ] Request chaining
+- [ ] Test scripts/assertions
+- [ ] Mock server
+- [ ] API documentation generation
+- [ ] Performance testing
+- [ ] Request scheduling
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Make your changes**
+4. **Commit your changes**
+   ```bash
+   git commit -m 'Add some amazing feature'
+   ```
+5. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+6. **Open a Pull Request**
+
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Write meaningful commit messages
+- Add comments for complex logic
+- Test your changes thoroughly
+- Ensure responsive design
+- Follow existing code style
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Pankaj Kumar**
+
+- GitHub: [@PankajKumardev](https://github.com/PankajKumardev)
+- Portfolio: [pankajk.tech](https://pankajk.tech)
+
+## 🙏 Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
+- [Lucide](https://lucide.dev/) for the icon set
+- [Tailwind CSS](https://tailwindcss.com/) for the styling framework
+- [Prisma](https://www.prisma.io/) for the amazing ORM
+
+## 📞 Support
+
+If you have any questions or need help, feel free to:
+
+- Open an issue on GitHub
+- Reach out via email
+
+---
+
+Made with ❤️ by Pankaj Kumar
