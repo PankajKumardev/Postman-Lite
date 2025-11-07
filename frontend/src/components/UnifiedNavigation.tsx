@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
-import { Button } from './ui/button'
-import { ThemeToggle } from './theme-toggle'
-import { getMe, logout } from '../lib/api'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { User, LogOut, Zap, Settings, FileText, ChevronDown } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { User, LogOut, FileText, Zap, ChevronDown } from 'lucide-react';
+
+import { Button } from './ui/button';
+import { ThemeToggle } from './theme-toggle';
+import { getMe, logout } from '../lib/api';
+import { cn } from '../lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,40 +13,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+} from './ui/dropdown-menu';
 
 interface NavigationLink {
-  label: string
-  href: string
-  icon?: React.ReactNode
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
 }
 
 interface UnifiedNavigationProps {
-  variant?: 'homepage' | 'app'
+  variant?: 'homepage' | 'app';
 }
 
-export function UnifiedNavigation({ variant = 'homepage' }: UnifiedNavigationProps) {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
-  const location = useLocation()
+export function UnifiedNavigation({
+  variant = 'homepage',
+}: UnifiedNavigationProps) {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getMe()
       .then((r: any) => {
-        setUser(r?.user || null)
+        setUser(r?.user || null);
       })
       .catch(() => setUser(null))
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
   async function handleLogout() {
     try {
-      await logout()
-      setUser(null)
-      navigate('/')
+      await logout();
+      setUser(null);
+      navigate('/');
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error('Logout failed:', error);
     }
   }
 
@@ -52,136 +56,157 @@ export function UnifiedNavigation({ variant = 'homepage' }: UnifiedNavigationPro
     if (variant === 'app') {
       return [
         { label: 'Requests', href: '/app', icon: <Zap className="w-4 h-4" /> },
-        { label: 'Collections', href: '/app/collections', icon: <FileText className="w-4 h-4" /> },
-        { label: 'Settings', href: '/app/settings', icon: <Settings className="w-4 h-4" /> },
-      ]
+        {
+          label: 'Collections',
+          href: '/app/collections',
+          icon: <FileText className="w-4 h-4" />,
+        },
+      ];
     } else {
       return [
         { label: 'Features', href: '#features' },
         { label: 'Pricing', href: '#pricing' },
         { label: 'Docs', href: '#docs' },
-      ]
+      ];
     }
-  }
+  };
 
-  const navigationLinks = getNavigationLinks()
+  const navigationLinks = getNavigationLinks();
 
   return (
-    <nav className="relative z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
-      <div className="max-w-full mx-auto px-4 lg:px-8 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-semibold text-foreground">
-              Postman Lite
-            </span>
-          </div>
-          
-          {/* Navigation Links & Actions */}
-          <div className="flex items-center space-x-6">
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
-              {navigationLinks.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => {
-                    if (link.href.startsWith('#')) {
-                      // Handle anchor links for homepage
-                      const element = document.querySelector(link.href)
-                      element?.scrollIntoView({ behavior: 'smooth' })
-                    } else {
-                      // Handle route navigation for app
-                      navigate(link.href)
-                    }
-                  }}
-                  className={`text-sm transition-colors flex items-center space-x-2 px-3 py-2 rounded-md ${
-                    location.pathname === link.href
-                      ? 'text-blue-600 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
-                </button>
-              ))}
-            </div>
-            
-            {/* Actions */}
-            <div className="flex items-center space-x-3">
-              <ThemeToggle />
-              
-              {!loading && user ? (
-                <div className="flex items-center space-x-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="flex items-center space-x-2 h-9 px-3 hover:bg-muted/50"
-                      >
-                        <div className="w-7 h-7 bg-green-600 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="hidden sm:flex flex-col items-start text-left">
-                          <p className="text-sm font-medium text-foreground leading-none">{user.name || user.email}</p>
-                          <p className="text-xs text-muted-foreground leading-none mt-0.5">{user.email}</p>
-                        </div>
-                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={handleLogout}
-                        className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              ) : variant === 'homepage' ? (
-                <>
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 md:px-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground hover:text-primary"
+        >
+          <span className="text-lg leading-tight font-medium">
+            Postman Lite
+          </span>
+        </Button>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-1">
+            {navigationLinks.map((link) => {
+              const isAnchor = link.href.startsWith('#');
+              const isActive = !isAnchor && location.pathname === link.href;
+
+              if (isAnchor) {
+                return (
                   <Button
-                    variant="ghost"
-                    onClick={() => navigate('/login')}
-                    className="text-sm hover:bg-muted/50 h-9 px-3"
+                    key={link.href}
+                    size="sm"
+                    className="text-sm font-medium px-3 py-2 rounded-md transition-colors"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'inherit',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                      e.currentTarget.style.color = '#111827';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = 'inherit';
+                    }}
+                    onClick={() => {
+                      const element = document.querySelector(link.href);
+                      element?.scrollIntoView({ behavior: 'smooth' });
+                    }}
                   >
-                    Sign In
+                    <span className="flex items-center gap-2">
+                      {link.icon}
+                      {link.label}
+                    </span>
                   </Button>
-                  <Button
-                    onClick={() => navigate('/app')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4"
-                  >
-                    Get Started
-                  </Button>
-                </>
-              ) : (
+                );
+              }
+
+              return (
                 <Button
-                  onClick={() => navigate('/login')}
-                  className="h-9 bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                  key={link.href}
                   size="sm"
+                  className={cn(
+                    'text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors',
+                    isActive &&
+                      'text-foreground bg-secondary hover:bg-secondary/80'
+                  )}
+                  onClick={() => navigate(link.href)}
                 >
-                  Sign In
+                  <span className="flex items-center gap-2 ">
+                    {link.icon}
+                    {link.label}
+                  </span>
                 </Button>
-              )}
-            </div>
+              );
+            })}
           </div>
+
+          <ThemeToggle />
+
+          {!loading && user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex items-center gap-2 px-3 py-2 rounded-md  transition-colors">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <div className="hidden sm:flex flex-col items-start text-left">
+                    <span className="text-sm font-medium leading-none">
+                      {user.name || user.email}
+                    </span>
+                    <span className="text-xs text-muted-foreground leading-none">
+                      {user.email}
+                    </span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {/* <DropdownMenuItem onClick={() => navigate('/app/collections')}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Collections
+                </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : variant === 'homepage' ? (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={() => navigate('/login')}
+                className="bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--secondary)/.8)] text-[hsl(var(--secondary-foreground))] transition-colors"
+              >
+                Sign in
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate('/app')}
+                className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/.9)] text-[hsl(var(--primary-foreground))] transition-colors"
+              >
+                Get started
+              </Button>
+            </div>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => navigate('/login')}
+              className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/.9)] text-[hsl(var(--primary-foreground))] transition-colors"
+            >
+              Sign in
+            </Button>
+          )}
         </div>
       </div>
-    </nav>
-  )
+    </header>
+  );
 }

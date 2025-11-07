@@ -1,40 +1,47 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card'
-import { Label } from '../components/ui/label'
-import { Alert, AlertDescription } from '../components/ui/alert'
-import { Separator } from '../components/ui/separator'
-import { login, signup } from '../lib/api'
-import { ThemeToggle } from '../components/theme-toggle'
-import { Eye, EyeOff, Mail, AlertCircle } from 'lucide-react'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import { Label } from '../components/ui/label';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Separator } from '../components/ui/separator';
+import { login, signup } from '../lib/api';
+import { ThemeToggle } from '../components/theme-toggle';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
       if (mode === 'signup') {
-        await signup({ email, password, name })
+        await signup({ email, password, name });
       }
-      await login({ email, password })
-      navigate('/app')
+      await login({ email, password });
+      navigate('/app');
     } catch (err: any) {
-      setError(err.message || 'An error occurred')
+      setError(err.message || 'An error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -43,35 +50,29 @@ export function LoginPage() {
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
-      
+
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-4">
-            <Mail className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Postman Lite
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Postman Lite</h1>
           <p className="text-muted-foreground">
             Your lightweight API testing companion
           </p>
         </div>
 
         {/* Login Card */}
-        <Card className="backdrop-blur-sm bg-card/50 border-border/50 shadow-xl">
+        <Card className="border border-border/60 shadow-lg">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
               {mode === 'login' ? 'Welcome back' : 'Create account'}
             </CardTitle>
             <CardDescription className="text-center">
-              {mode === 'login' 
+              {mode === 'login'
                 ? 'Enter your credentials to access your workspace'
-                : 'Sign up to start testing your APIs'
-              }
+                : 'Sign up to start testing your APIs'}
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {mode === 'signup' && (
@@ -88,7 +89,7 @@ export function LoginPage() {
                   />
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email-input">Email</Label>
                 <Input
@@ -101,13 +102,13 @@ export function LoginPage() {
                   className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password-input">Password</Label>
                 <div className="relative">
                   <Input
                     id="password-input"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -118,7 +119,7 @@ export function LoginPage() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-[hsl(var(--muted))] transition-colors"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -129,7 +130,7 @@ export function LoginPage() {
                   </Button>
                 </div>
               </div>
-              
+
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -137,11 +138,11 @@ export function LoginPage() {
                 </Alert>
               )}
             </CardContent>
-            
+
             <CardFooter className="flex flex-col space-y-4">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/.9)] text-[hsl(var(--primary-foreground))] transition-colors"
                 disabled={loading}
               >
                 {loading ? (
@@ -149,28 +150,32 @@ export function LoginPage() {
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>Please wait...</span>
                   </div>
+                ) : mode === 'login' ? (
+                  'Sign In'
                 ) : (
-                  mode === 'login' ? 'Sign In' : 'Create Account'
+                  'Create Account'
                 )}
               </Button>
-              
+
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
+                  {mode === 'login'
+                    ? "Don't have an account?"
+                    : 'Already have an account?'}
                 </p>
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => {
-                    setMode(mode === 'login' ? 'signup' : 'login')
-                    setError('')
+                    setMode(mode === 'login' ? 'signup' : 'login');
+                    setError('');
                   }}
-                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-[hsl(var(--primary))] hover:text-[hsl(var(--primary)/.8)] hover:bg-[hsl(var(--muted))] transition-colors"
                 >
                   {mode === 'login' ? 'Create account' : 'Sign in instead'}
                 </Button>
               </div>
-              
+
               <div className="relative">
                 <Separator />
                 <div className="relative flex justify-center text-xs uppercase">
@@ -179,23 +184,23 @@ export function LoginPage() {
                   </span>
                 </div>
               </div>
-              
+
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate('/app')}
-                className="w-full border-dashed transition-all duration-200 hover:bg-muted/50"
+                className="w-full border-dashed hover:bg-[hsl(var(--muted))] hover:border-[hsl(var(--border))] transition-colors"
               >
                 Continue as Guest
               </Button>
             </CardFooter>
           </form>
         </Card>
-        
+
         <p className="text-xs text-center text-muted-foreground">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>
     </div>
-  )
+  );
 }

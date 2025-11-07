@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   :root {
@@ -25,9 +25,9 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 0 0% 0%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 0 0% 12%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
@@ -58,7 +58,8 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: "Geist Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system,
+      Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
     transition: background-color 0.3s ease, color 0.3s ease;
     min-height: 100vh;
   }
@@ -67,7 +68,8 @@
 /* Additional utility classes for better theme support */
 @layer utilities {
   .theme-transition {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease,
+      border-color 0.3s ease;
   }
 }
 
@@ -76,9 +78,23 @@
   [data-radix-popper-content-wrapper] {
     background: hsl(var(--popover)) !important;
   }
-  
+
   .dropdown-content-solid {
     background: hsl(var(--popover)) !important;
     backdrop-filter: none !important;
   }
+}
+
+/* Import and New Collection buttons */
+.custom-import-btn:hover,
+.custom-import-btn:focus {
+  background-color: unset !important;
+  color: unset !important;
+  border-color: unset !important;
+}
+.custom-new-collection-btn:hover,
+.custom-new-collection-btn:focus {
+  background-color: unset !important;
+  color: unset !important;
+  border-color: unset !important;
 }

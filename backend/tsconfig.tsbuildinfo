@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/routes/auth.ts","./src/routes/collections.ts","./src/routes/proxy.ts","./src/routes/requests.ts"],"version":"5.9.2"}
+{"root":["./src/index.ts","./src/routes/auth.ts","./src/routes/collections.ts","./src/routes/proxy.ts","./src/routes/requests.ts"],"version":"5.9.3"}
