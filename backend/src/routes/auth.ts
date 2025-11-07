@@ -36,9 +36,9 @@ router.post('/signup', async (req: any, res: any) => {
     // Validate request body
     const validationResult = signupSchema.safeParse(req.body);
     if (!validationResult.success) {
-      return res.status(400).json({ 
-        error: 'Validation failed', 
-        details: validationResult.error.issues 
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: validationResult.error.issues,
       });
     }
 
@@ -53,10 +53,10 @@ router.post('/signup', async (req: any, res: any) => {
     // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { 
-        email, 
-        password: hashedPassword, 
-        name: name || null 
+      data: {
+        email,
+        password: hashedPassword,
+        name: name || null,
       },
     });
 
@@ -64,15 +64,15 @@ router.post('/signup', async (req: any, res: any) => {
     const token = createToken(user.id, user.email);
     res.cookie('auth-token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    res.status(201).json({ 
-      id: user.id, 
-      email: user.email, 
-      name: user.name 
+    res.status(201).json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -86,40 +86,40 @@ router.post('/login', async (req: any, res: any) => {
     // Validate request body
     const validationResult = loginSchema.safeParse(req.body);
     if (!validationResult.success) {
-      return res.status(400).json({ 
-        error: 'Validation failed', 
-        details: validationResult.error.issues 
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: validationResult.error.issues,
       });
     }
 
     const { email, password } = validationResult.data;
-    
+
     // Find user and verify password
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
-    
+
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
-    
+
     // Create JWT token and set HttpOnly cookie
     const token = createToken(user.id, user.email);
     res.cookie('auth-token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    
-    res.json({ 
-      user: { 
-        id: user.id, 
-        email: user.email, 
-        name: user.name 
-      } 
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
     });
   } catch (err) {
     console.error('Login error:', err);
@@ -137,27 +137,32 @@ router.post('/logout', (req: any, res: any) => {
 router.get('/me', async (req: any, res: any) => {
   try {
     const token = req.cookies['auth-token'];
-    
+
     if (!token) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     const secret = process.env.AUTH_SECRET;
     if (!secret) {
-      return res.status(500).json({ error: 'Authentication configuration error' });
+      return res
+        .status(500)
+        .json({ error: 'Authentication configuration error' });
     }
 
-    const decoded = jwt.verify(token, secret) as { userId: string; email: string };
-    
+    const decoded = jwt.verify(token, secret) as {
+      userId: string;
+      email: string;
+    };
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, name: true }
+      select: { id: true, email: true, name: true },
     });
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json({ user });
   } catch (error) {
     console.error('Error fetching user data:', error);
@@ -172,12 +177,13 @@ router.get('/providers', async (req: any, res: any) => {
   try {
     const providers = {
       google: {
-        enabled: !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET,
+        enabled:
+          !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET,
         name: 'Google',
         icon: 'google',
         color: '#4285F4',
-        url: '/api/auth/google'
-      }
+        url: '/api/auth/google',
+      },
     };
 
     res.json({ providers });
@@ -190,14 +196,17 @@ router.get('/providers', async (req: any, res: any) => {
 // Google OAuth initiation
 router.get('/google', (req: any, res: any) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
+  const redirectUri = `${req.protocol}://${req.get(
+    'host'
+  )}/api/auth/google/callback`;
   const scope = 'email profile';
-  
+
   if (!clientId) {
     return res.status(500).json({ error: 'Google OAuth not configured' });
   }
-  
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+
+  const authUrl =
+    `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${clientId}&` +
     `redirect_uri=${encodeURIComponent(redirectUri)}&` +
     `response_type=code&` +
@@ -212,7 +221,7 @@ router.get('/google', (req: any, res: any) => {
 router.get('/google/callback', async (req: any, res: any) => {
   try {
     const { code } = req.query;
-    
+
     if (!code) {
       return res.redirect('http://localhost:5173/login?error=oauth_failed');
     }
@@ -228,11 +237,13 @@ router.get('/google/callback', async (req: any, res: any) => {
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
         code: code as string,
         grant_type: 'authorization_code',
-        redirect_uri: `${req.protocol}://${req.get('host')}/api/auth/google/callback`,
+        redirect_uri: `${req.protocol}://${req.get(
+          'host'
+        )}/api/auth/google/callback`,
       }),
     });
 
-    const tokens = await tokenResponse.json() as any;
+    const tokens = (await tokenResponse.json()) as any;
 
     if (!tokenResponse.ok) {
       console.error('Google token exchange failed:', tokens);
@@ -240,13 +251,16 @@ router.get('/google/callback', async (req: any, res: any) => {
     }
 
     // Get user info
-    const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
-    });
+    const userResponse = await fetch(
+      'https://www.googleapis.com/oauth2/v2/userinfo',
+      {
+        headers: {
+          Authorization: `Bearer ${tokens.access_token}`,
+        },
+      }
+    );
 
-    const userInfo = await userResponse.json() as any;
+    const userInfo = (await userResponse.json()) as any;
 
     if (!userResponse.ok) {
       console.error('Google user info failed:', userInfo);
@@ -280,7 +294,8 @@ router.get('/google/callback', async (req: any, res: any) => {
               providerAccountId: userInfo.id,
               access_token: tokens.access_token,
               refresh_token: tokens.refresh_token,
-              expires_at: Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600),
+              expires_at:
+                Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600),
               token_type: 'Bearer',
               scope: 'email profile',
             },
@@ -298,19 +313,20 @@ router.get('/google/callback', async (req: any, res: any) => {
         data: {
           access_token: tokens.access_token,
           refresh_token: tokens.refresh_token,
-          expires_at: Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600),
+          expires_at:
+            Math.floor(Date.now() / 1000) + (tokens.expires_in || 3600),
         },
       });
     }
 
     // Create JWT token
     const token = createToken(user.id, user.email);
-    
+
     // Set HttpOnly cookie
     res.cookie('auth-token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
