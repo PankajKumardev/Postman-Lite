@@ -16,7 +16,11 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(
   cors({
-    origin: '*', // allow all origins for simplicity; adjust as needed
+    origin: [
+      'http://localhost:5173',
+      'https://postmanlite.vercel.app',
+      'http://postman.pankajk.tech',
+    ],
     credentials: true, // Allow cookies
   })
 );
