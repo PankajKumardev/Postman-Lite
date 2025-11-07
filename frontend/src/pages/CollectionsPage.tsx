@@ -476,7 +476,9 @@ export function CollectionsPage() {
       // Prepare updates object with only non-empty fields
       const updates: any = {};
       if (bulkEditData.name.trim()) updates.name = bulkEditData.name;
-      if (bulkEditData.method) updates.method = bulkEditData.method;
+      if (bulkEditData.method && bulkEditData.method !== 'KEEP_EXISTING') {
+        updates.method = bulkEditData.method;
+      }
       if (bulkEditData.url.trim()) updates.url = bulkEditData.url;
       if (bulkEditData.headers.some((h) => h.key && h.value)) {
         updates.headers = Object.fromEntries(
@@ -1522,10 +1524,10 @@ export function CollectionsPage() {
                   }
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder="Keep existing" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Keep existing</SelectItem>
+                    <SelectItem value="KEEP_EXISTING">Keep existing</SelectItem>
                     <SelectItem value="GET">GET</SelectItem>
                     <SelectItem value="POST">POST</SelectItem>
                     <SelectItem value="PUT">PUT</SelectItem>
