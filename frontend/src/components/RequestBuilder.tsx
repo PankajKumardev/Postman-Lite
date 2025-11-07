@@ -62,7 +62,9 @@ const METHODS: HttpMethod[] = [
 ];
 
 export function RequestBuilder() {
-  const [url, setUrl] = useState('https://httpbin.org/get');
+  const [url, setUrl] = useState(
+    'https://rickandmortyapi.com/api/character/?page=2'
+  );
   const [method, setMethod] = useState<HttpMethod>('GET');
   const [headers, setHeaders] = useState<HeaderRow[]>([
     { id: crypto.randomUUID(), key: 'Accept', value: 'application/json' },
