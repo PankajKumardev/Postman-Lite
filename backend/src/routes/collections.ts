@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -506,72 +507,44 @@ router.post(
         return res.status(404).json({ error: 'Collection request not found' });
       }
 
-      // Execute the request directly using the proxy logic
-      const isLocalhostUrl = (url: string) => {
-        try {
-          const parsed = new URL(url);
-          return ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname);
-        } catch {
-          return false;
-        }
-      };
-
+      // Execute the request using axios directly
       let result: any = {};
 
       try {
-        if (isLocalhostUrl(collectionRequest.url)) {
-          // Direct fetch for localhost URLs
-          const response = await fetch(collectionRequest.url, {
-            method: collectionRequest.method,
-            headers: {
-              Accept: 'application/json',
-              ...(collectionRequest.headers as Record<string, string>),
-            },
-            body: collectionRequest.body
-              ? JSON.stringify(collectionRequest.body)
-              : undefined,
-          });
+        const axiosConfig: any = {
+          method: collectionRequest.method.toLowerCase(),
+          url: collectionRequest.url,
+          headers: {
+            'User-Agent': 'Postman-Lite/1.0',
+            ...(collectionRequest.headers as Record<string, string>),
+          },
+          timeout: 30000,
+          validateStatus: () => true, // Don't throw on any status code
+        };
 
-          const data = response.headers
-            .get('content-type')
-            ?.includes('application/json')
-            ? await response.json()
-            : await response.text();
-
-          const headers: Record<string, string> = {};
-          response.headers.forEach((v, k) => (headers[k] = v));
-
-          result = {
-            status: response.status,
-            statusText: response.statusText,
-            headers,
-            data,
-          };
-        } else {
-          // Use proxy for remote URLs
-          const proxyResponse = await fetch(
-            `${process.env.API_BASE || 'http://localhost:3000'}/api/proxy`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                url: collectionRequest.url,
-                method: collectionRequest.method,
-                headers: collectionRequest.headers,
-                body: collectionRequest.body,
-              }),
-            }
-          );
-
-          if (proxyResponse.ok) {
-            result = await proxyResponse.json();
-          } else {
-            result = { error: 'Proxy request failed' };
+        // Add body for methods that support it
+        if (
+          ['POST', 'PUT', 'PATCH'].includes(collectionRequest.method) &&
+          collectionRequest.body
+        ) {
+          axiosConfig.data = collectionRequest.body;
+          if (!axiosConfig.headers['Content-Type']) {
+            axiosConfig.headers['Content-Type'] = 'application/json';
           }
         }
-      } catch (error) {
+
+        const response = await axios(axiosConfig);
+
         result = {
-          error: error instanceof Error ? error.message : 'Request failed',
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers,
+          data: response.data,
+        };
+      } catch (error: any) {
+        result = {
+          error: error.message || 'fetch failed',
+          code: error.code,
         };
       }
 
@@ -729,66 +702,29 @@ router.post(
 
       // Execute all requests in parallel
       const executeRequest = async (request: any) => {
-        const isLocalhostUrl = (url: string) => {
-          try {
-            const parsed = new URL(url);
-            return ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname);
-          } catch {
-            return false;
-          }
-        };
-
         try {
-          let result: any = {};
+          const axiosConfig: any = {
+            method: request.method.toLowerCase(),
+            url: request.url,
+            headers: {
+              'User-Agent': 'Postman-Lite/1.0',
+              ...(request.headers as Record<string, string>),
+            },
+            timeout: 30000,
+            validateStatus: () => true,
+          };
 
-          if (isLocalhostUrl(request.url)) {
-            // Direct fetch for localhost URLs
-            const response = await fetch(request.url, {
-              method: request.method,
-              headers: {
-                Accept: 'application/json',
-                ...(request.headers as Record<string, string>),
-              },
-              body: request.body ? JSON.stringify(request.body) : undefined,
-            });
-
-            const data = response.headers
-              .get('content-type')
-              ?.includes('application/json')
-              ? await response.json()
-              : await response.text();
-
-            const headers: Record<string, string> = {};
-            response.headers.forEach((v, k) => (headers[k] = v));
-
-            result = {
-              status: response.status,
-              statusText: response.statusText,
-              headers,
-              data,
-            };
-          } else {
-            // Use proxy for remote URLs
-            const proxyResponse = await fetch(
-              `${process.env.API_BASE || 'http://localhost:3000'}/api/proxy`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  url: request.url,
-                  method: request.method,
-                  headers: request.headers,
-                  body: request.body,
-                }),
-              }
-            );
-
-            if (proxyResponse.ok) {
-              result = await proxyResponse.json();
-            } else {
-              result = { error: 'Proxy request failed' };
+          if (
+            ['POST', 'PUT', 'PATCH'].includes(request.method) &&
+            request.body
+          ) {
+            axiosConfig.data = request.body;
+            if (!axiosConfig.headers['Content-Type']) {
+              axiosConfig.headers['Content-Type'] = 'application/json';
             }
           }
+
+          const response = await axios(axiosConfig);
 
           return {
             requestId: request.id,
@@ -796,16 +732,20 @@ router.post(
             requestUrl: request.url,
             requestMethod: request.method,
             success: true,
-            ...result,
+            status: response.status,
+            statusText: response.statusText,
+            headers: response.headers,
+            data: response.data,
           };
-        } catch (error) {
+        } catch (error: any) {
           return {
             requestId: request.id,
             requestName: request.name,
             requestUrl: request.url,
             requestMethod: request.method,
             success: false,
-            error: error instanceof Error ? error.message : 'Request failed',
+            error: error.message || 'Request failed',
+            code: error.code,
           };
         }
       };
