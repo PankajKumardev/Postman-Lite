@@ -23,7 +23,7 @@ export function ResponsePreview({
     contentType.includes('text/html') || contentType.includes('html');
   const isJson =
     contentType.includes('application/json') || contentType.includes('json');
-  const isText = contentType.includes('text/');
+
 
   const copyToClipboard = async () => {
     try {
